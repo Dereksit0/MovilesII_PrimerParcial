@@ -5,9 +5,11 @@ namespace GameVault.Data;
 /// <summary>
 /// Datos de prueba hardcodeados de la Fase 1.
 ///
-/// Las portadas apuntan a URLs reales y verificadas (CDN público de Steam y
-/// Wikimedia Commons). Cuando la Fase 4 conecte la API REST, esta clase se elimina o
-/// queda como fallback offline: nadie fuera de <see cref="VideojuegoRepository"/>
+/// Las portadas apuntan a URLs reales y verificadas del CDN público de Steam y de
+/// libretro-thumbnails. Se descartó Wikimedia: exige un User-Agent informativo y
+/// responde 403 a HttpClient, que no manda ninguno, así que las portadas salían en
+/// blanco. Cuando la Fase 4 conecte la API REST esta clase se elimina o queda como
+/// fallback offline: nadie fuera de <see cref="VideojuegoRepository"/>
 /// la referencia.
 /// </summary>
 public static class VideojuegoSeedData
@@ -22,7 +24,7 @@ public static class VideojuegoSeedData
             Genero = "Aventura",
             Estado = "Completo en caja (CIB)",
             ValorEstimado = 59.99m,
-            ImagenUrl = "https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg",
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_Wii_U/master/Named_Boxarts/Legend%20of%20Zelda,%20The%20-%20Breath%20of%20the%20Wild%20(USA)%20(En,Fr,Es).png",
             EsFavorito = false,
             Completado = true
         },
@@ -46,7 +48,7 @@ public static class VideojuegoSeedData
             Genero = "Aventura",
             Estado = "Solo cartucho/disco",
             ValorEstimado = 85.00m,
-            ImagenUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/5/57/The_Legend_of_Zelda_Ocarina_of_Time.jpg/330px-The_Legend_of_Zelda_Ocarina_of_Time.jpg",
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_Nintendo_64/master/Named_Boxarts/Legend%20of%20Zelda,%20The%20-%20Ocarina%20of%20Time%20(USA).png",
             EsFavorito = false,
             Completado = true
         },
@@ -58,7 +60,7 @@ public static class VideojuegoSeedData
             Genero = "Aventura",
             Estado = "Completo en caja (CIB)",
             ValorEstimado = 120.00m,
-            ImagenUrl = "https://upload.wikimedia.org/wikipedia/en/f/f8/Shadow_of_the_Colossus_%282005%29_cover.jpg",
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation_2/master/Named_Boxarts/Shadow%20of%20the%20Colossus%20(USA).png",
             EsFavorito = false,
             Completado = true
         },
@@ -70,7 +72,7 @@ public static class VideojuegoSeedData
             Genero = "Shooter",
             Estado = "Solo cartucho/disco",
             ValorEstimado = 95.50m,
-            ImagenUrl = "https://upload.wikimedia.org/wikipedia/en/b/ba/MetroidPrimebox.jpg",
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_GameCube/master/Named_Boxarts/Metroid%20Prime%20(USA).png",
             EsFavorito = false,
             Completado = false
         },
@@ -82,7 +84,7 @@ public static class VideojuegoSeedData
             Genero = "RPG",
             Estado = "Deseado",
             ValorEstimado = 320.00m,
-            ImagenUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Chrono_Trigger.jpg/330px-Chrono_Trigger.jpg",
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_Super_Nintendo_Entertainment_System/master/Named_Boxarts/Chrono%20Trigger%20(USA).png",
             EsFavorito = true,
             Completado = false
         },
@@ -94,7 +96,7 @@ public static class VideojuegoSeedData
             Genero = "RPG",
             Estado = "Deseado",
             ValorEstimado = 140.00m,
-            ImagenUrl = "https://upload.wikimedia.org/wikipedia/en/c/c2/Final_Fantasy_VII_Box_Art.jpg",
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation/master/Named_Boxarts/Final%20Fantasy%20VII%20(USA).png",
             EsFavorito = true,
             Completado = false
         },
@@ -106,7 +108,7 @@ public static class VideojuegoSeedData
             Genero = "Aventura",
             Estado = "Deseado",
             ValorEstimado = 110.00m,
-            ImagenUrl = "https://upload.wikimedia.org/wikipedia/en/b/b3/Mgs3box.jpg",
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation_2/master/Named_Boxarts/Metal%20Gear%20Solid%203%20-%20Snake%20Eater%20(USA).png",
             EsFavorito = true,
             Completado = false
         },
@@ -154,7 +156,7 @@ public static class VideojuegoSeedData
             Genero = "Plataformas",
             Estado = "Vendido",
             ValorEstimado = 75.00m,
-            ImagenUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/e/e9/Super_Mario_64.png/330px-Super_Mario_64.png",
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_Nintendo_64/master/Named_Boxarts/Super%20Mario%2064%20(USA).png",
             EsFavorito = false,
             Completado = true
         },
