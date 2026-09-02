@@ -47,7 +47,8 @@
          se lea sobre cualquier imagen. -->
     <LinearGradientBrush x:Key="GvHeroScrim" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#000B0F17" Offset="0.0" />
-        <GradientStop Color="#800B0F17" Offset="0.55" />
+        <GradientStop Color="#660B0F17" Offset="0.45" />
+        <GradientStop Color="#F20B0F17" Offset="0.78" />
         <GradientStop Color="#FF0B0F17" Offset="1.0" />
     </LinearGradientBrush>
 
