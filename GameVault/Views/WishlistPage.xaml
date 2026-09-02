@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="GameVault.Views.WishlistPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Wishlist">
+
+    <!-- Esqueleto creado junto con las rutas del Shell. La implementacion completa
+         de esta pantalla llega en la rama omar. -->
+    <Label
+        Text="Wishlist"
+        Style="{StaticResource PageTitleLabel}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center" />
+
+</ContentPage>
