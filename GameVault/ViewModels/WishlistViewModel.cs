@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Windows.Input;
 using GameVault.Data;
 using GameVault.Models;
@@ -9,10 +8,9 @@ namespace GameVault.ViewModels;
 public class WishlistViewModel : BaseViewModel
 {
     private readonly IVideojuegoRepository _repositorio;
-    private static readonly CultureInfo Moneda = CultureInfo.GetCultureInfo("en-US");
 
     private int _totalDeseados;
-    private string _inversionEstimada = "$0.00";
+    private string _inversionEstimada = FormatoMoneda.Formatear(0m);
 
     public WishlistViewModel(IVideojuegoRepository? repositorio = null)
     {
@@ -57,7 +55,7 @@ public class WishlistViewModel : BaseViewModel
         }
 
         TotalDeseados = deseados.Count;
-        InversionEstimada = deseados.Sum(j => j.ValorEstimado).ToString("C2", Moneda);
+        InversionEstimada = FormatoMoneda.Formatear(deseados.Sum(j => j.ValorEstimado));
         OnPropertyChanged(nameof(HayDeseados));
     },
     "No se pudo cargar la wishlist");

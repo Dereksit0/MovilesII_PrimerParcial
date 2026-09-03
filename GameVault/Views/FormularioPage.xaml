@@ -84,7 +84,7 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout>
-                    <Label Style="{StaticResource FormLabel}" Text="VALOR ESTIMADO (USD)" />
+                    <Label Style="{StaticResource FormLabel}" Text="VALOR ESTIMADO (MXN)" />
                     <Border Style="{StaticResource FieldBorder}">
                         <Entry
                             Keyboard="Numeric"
