@@ -7,20 +7,6 @@
     Title="GameVault"
     FlyoutBehavior="Disabled">
 
-    <!--
-        Por qué TabBar y no Flyout
-        ==========================
-        De las cuatro pantallas solo dos son destinos de primer nivel: la colección
-        completa y la wishlist. Detalle y Formulario son pantallas contextuales: se
-        llega a ellas desde un juego concreto o desde el botón de agregar, nunca desde
-        un menú, y por eso se registran como rutas apiladas (abajo, en el code-behind)
-        y no como pestañas.
-
-        Con solo dos destinos, un Flyout escondería la navegación detrás de un botón
-        de hamburguesa y añadiría un toque extra para algo que la TabBar resuelve en
-        uno. La TabBar además deja siempre visible en qué sección se está, que es la
-        convención de las apps móviles con cinco destinos o menos.
-    -->
     <TabBar>
 
         <ShellContent

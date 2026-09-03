@@ -9,12 +9,6 @@
     Title="Coleccion"
     Shell.NavBarIsVisible="False">
 
-    <!--
-        Pantalla raiz de la pestana Coleccion.
-        Encabezado propio (por eso se oculta la NavBar del Shell), resumen de la
-        coleccion y lista de tarjetas. El boton flotante abre el formulario en modo
-        agregar; tocar una tarjeta navega al detalle con el Id en la query string.
-    -->
     <Grid RowDefinitions="Auto,*">
 
         <VerticalStackLayout

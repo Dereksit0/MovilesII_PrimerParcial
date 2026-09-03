@@ -8,12 +8,6 @@
     x:DataType="vm:DetalleViewModel"
     Title="">
 
-    <!--
-        Pantalla hero: la portada ocupa la parte superior a sangre, con un velo
-        degradado encima para que el titulo se lea sobre cualquier imagen, y la ficha
-        organizada debajo. La NavBar del Shell queda visible pero sin titulo, porque
-        es la que aporta el boton de retroceso.
-    -->
     <ScrollView>
         <VerticalStackLayout Spacing="0">
 
