@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Windows.Input;
 using GameVault.Data;
 using GameVault.Models;
@@ -9,11 +8,10 @@ namespace GameVault.ViewModels;
 public class ListaViewModel : BaseViewModel
 {
     private readonly IVideojuegoRepository _repositorio;
-    private static readonly CultureInfo Moneda = CultureInfo.GetCultureInfo("en-US");
 
     private int _totalJuegos;
     private int _totalCompletados;
-    private string _valorTotal = "$0.00";
+    private string _valorTotal = FormatoMoneda.Formatear(0m);
 
     public ListaViewModel(IVideojuegoRepository? repositorio = null)
     {
@@ -65,7 +63,7 @@ public class ListaViewModel : BaseViewModel
 
         TotalJuegos = juegos.Count;
         TotalCompletados = juegos.Count(j => j.Completado);
-        ValorTotal = juegos.Sum(j => j.ValorEstimado).ToString("C2", Moneda);
+        ValorTotal = FormatoMoneda.Formatear(juegos.Sum(j => j.ValorEstimado));
         OnPropertyChanged(nameof(HayJuegos));
     },
     "No se pudo cargar la colección");
