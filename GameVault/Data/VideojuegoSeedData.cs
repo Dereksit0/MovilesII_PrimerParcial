@@ -177,14 +177,14 @@ public static class VideojuegoSeedData
         new Videojuego
         {
             Id = 15,
-            Titulo = "Tony Hawk\u0027s Pro Skater 1 + 2",
-            Plataforma = "PS5",
+            Titulo = "Tony Hawk\u0027s Pro Skater 2",
+            Plataforma = "PS1",
             Genero = "Deportes",
-            Estado = "En colección",
-            ValorEstimado = 529.00m,
-            ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1079800/library_600x900.jpg",
+            Estado = "Completo en caja (CIB)",
+            ValorEstimado = 650.00m,
+            ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation/master/Named_Boxarts/Tony%20Hawk%27s%20Pro%20Skater%202%20(USA).png",
             EsFavorito = false,
-            Completado = false
+            Completado = true
         },
         new Videojuego
         {
