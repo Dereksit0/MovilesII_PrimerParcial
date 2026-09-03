@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace GameVault.Models;
+﻿namespace GameVault.Models;
 
 public class Videojuego
 {
@@ -28,7 +26,7 @@ public class Videojuego
         string.IsNullOrWhiteSpace(ImagenLocalPath) ? ImagenUrl : ImagenLocalPath;
 
     public string ValorFormateado =>
-        ValorEstimado.ToString("C2", CultureInfo.GetCultureInfo("en-US"));
+        FormatoMoneda.Formatear(ValorEstimado);
 
     public string EtiquetaProgreso => Completado ? "Completado" : "Pendiente";
 

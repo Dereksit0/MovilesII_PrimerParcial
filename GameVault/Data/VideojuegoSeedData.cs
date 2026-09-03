@@ -13,7 +13,7 @@ public static class VideojuegoSeedData
             Plataforma = "Nintendo Switch",
             Genero = "Aventura",
             Estado = "Completo en caja (CIB)",
-            ValorEstimado = 59.99m,
+            ValorEstimado = 1299.00m,
             ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_Wii_U/master/Named_Boxarts/Legend%20of%20Zelda,%20The%20-%20Breath%20of%20the%20Wild%20(USA)%20(En,Fr,Es).png",
             EsFavorito = false,
             Completado = true
@@ -25,7 +25,7 @@ public static class VideojuegoSeedData
             Plataforma = "PS5",
             Genero = "RPG",
             Estado = "En colección",
-            ValorEstimado = 49.99m,
+            ValorEstimado = 999.00m,
             ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/library_600x900.jpg",
             EsFavorito = false,
             Completado = true
@@ -37,7 +37,7 @@ public static class VideojuegoSeedData
             Plataforma = "N64",
             Genero = "Aventura",
             Estado = "Solo cartucho/disco",
-            ValorEstimado = 85.00m,
+            ValorEstimado = 1600.00m,
             ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_Nintendo_64/master/Named_Boxarts/Legend%20of%20Zelda,%20The%20-%20Ocarina%20of%20Time%20(USA).png",
             EsFavorito = false,
             Completado = true
@@ -49,7 +49,7 @@ public static class VideojuegoSeedData
             Plataforma = "PS2",
             Genero = "Aventura",
             Estado = "Completo en caja (CIB)",
-            ValorEstimado = 120.00m,
+            ValorEstimado = 2250.00m,
             ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation_2/master/Named_Boxarts/Shadow%20of%20the%20Colossus%20(USA).png",
             EsFavorito = false,
             Completado = true
@@ -61,7 +61,7 @@ public static class VideojuegoSeedData
             Plataforma = "GameCube",
             Genero = "Shooter",
             Estado = "Solo cartucho/disco",
-            ValorEstimado = 95.50m,
+            ValorEstimado = 1790.00m,
             ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_GameCube/master/Named_Boxarts/Metroid%20Prime%20(USA).png",
             EsFavorito = false,
             Completado = false
@@ -73,7 +73,7 @@ public static class VideojuegoSeedData
             Plataforma = "SNES",
             Genero = "RPG",
             Estado = "Deseado",
-            ValorEstimado = 320.00m,
+            ValorEstimado = 6000.00m,
             ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_Super_Nintendo_Entertainment_System/master/Named_Boxarts/Chrono%20Trigger%20(USA).png",
             EsFavorito = true,
             Completado = false
@@ -85,7 +85,7 @@ public static class VideojuegoSeedData
             Plataforma = "PS1",
             Genero = "RPG",
             Estado = "Deseado",
-            ValorEstimado = 140.00m,
+            ValorEstimado = 2600.00m,
             ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation/master/Named_Boxarts/Final%20Fantasy%20VII%20(USA).png",
             EsFavorito = true,
             Completado = false
@@ -97,7 +97,7 @@ public static class VideojuegoSeedData
             Plataforma = "PS2",
             Genero = "Aventura",
             Estado = "Deseado",
-            ValorEstimado = 110.00m,
+            ValorEstimado = 2050.00m,
             ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation_2/master/Named_Boxarts/Metal%20Gear%20Solid%203%20-%20Snake%20Eater%20(USA).png",
             EsFavorito = true,
             Completado = false
@@ -109,7 +109,7 @@ public static class VideojuegoSeedData
             Plataforma = "Xbox Series X",
             Genero = "Aventura",
             Estado = "En colección",
-            ValorEstimado = 39.99m,
+            ValorEstimado = 749.00m,
             ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/library_600x900.jpg",
             EsFavorito = false,
             Completado = true
@@ -121,7 +121,7 @@ public static class VideojuegoSeedData
             Plataforma = "PC",
             Genero = "Plataformas",
             Estado = "En colección",
-            ValorEstimado = 14.99m,
+            ValorEstimado = 279.00m,
             ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/367520/library_600x900.jpg",
             EsFavorito = false,
             Completado = true
@@ -133,7 +133,7 @@ public static class VideojuegoSeedData
             Plataforma = "Nintendo Switch",
             Genero = "RPG",
             Estado = "Deseado",
-            ValorEstimado = 24.99m,
+            ValorEstimado = 469.00m,
             ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/library_600x900.jpg",
             EsFavorito = true,
             Completado = false
@@ -145,7 +145,7 @@ public static class VideojuegoSeedData
             Plataforma = "N64",
             Genero = "Plataformas",
             Estado = "Vendido",
-            ValorEstimado = 75.00m,
+            ValorEstimado = 1400.00m,
             ImagenUrl = "https://raw.githubusercontent.com/libretro-thumbnails/Nintendo_-_Nintendo_64/master/Named_Boxarts/Super%20Mario%2064%20(USA).png",
             EsFavorito = false,
             Completado = true
@@ -157,7 +157,7 @@ public static class VideojuegoSeedData
             Plataforma = "PS5",
             Genero = "Aventura",
             Estado = "Completo en caja (CIB)",
-            ValorEstimado = 29.99m,
+            ValorEstimado = 559.00m,
             ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1593500/library_600x900.jpg",
             EsFavorito = false,
             Completado = true
@@ -169,7 +169,7 @@ public static class VideojuegoSeedData
             Plataforma = "PC",
             Genero = "Shooter",
             Estado = "En colección",
-            ValorEstimado = 34.99m,
+            ValorEstimado = 649.00m,
             ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/library_600x900.jpg",
             EsFavorito = false,
             Completado = false
@@ -181,7 +181,7 @@ public static class VideojuegoSeedData
             Plataforma = "PS5",
             Genero = "Deportes",
             Estado = "En colección",
-            ValorEstimado = 27.99m,
+            ValorEstimado = 529.00m,
             ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1079800/library_600x900.jpg",
             EsFavorito = false,
             Completado = false
