@@ -3,26 +3,10 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!--
-        Sistema de estilos de GameVault.
-
-        Se divide en:
-          1. Escala de espaciado y radios reutilizables.
-          2. Estilos implicitos: dan un aspecto base coherente a todos los controles
-             sin tener que tocarlos uno por uno en cada pagina.
-          3. Estilos con clave: los componentes del lenguaje visual (tipografia,
-             cards, chips, botones, campos de formulario).
-
-        Regla del equipo: ninguna pagina define colores ni tamanos de fuente inline.
-        Si algo hace falta y no esta aqui, se agrega aqui.
-    -->
-
-    <!-- ==================== 1. Espaciado y radios ==================== -->
     <Thickness x:Key="GvPagePadding">20,16,20,0</Thickness>
     <Thickness x:Key="GvCardPadding">12</Thickness>
     <Thickness x:Key="GvChipPadding">10,4</Thickness>
 
-    <!-- ==================== 2. Estilos implicitos ==================== -->
     <Style TargetType="Page" ApplyToDerivedTypes="True">
         <Setter Property="Padding" Value="0" />
         <Setter Property="BackgroundColor" Value="{StaticResource GvBackground}" />
@@ -180,7 +164,6 @@
         <Setter Property="IconColor" Value="{StaticResource GvTextPrimary}" />
     </Style>
 
-    <!-- ==================== 3. Tipografia ==================== -->
     <Style x:Key="PageTitleLabel" TargetType="Label">
         <Setter Property="FontFamily" Value="OpenSansSemibold" />
         <Setter Property="FontSize" Value="29" />
@@ -235,7 +218,6 @@
         <Setter Property="TextColor" Value="{StaticResource GvTextMuted}" />
     </Style>
 
-    <!-- ==================== 4. Contenedores ==================== -->
     <Style x:Key="CardBorder" TargetType="Border">
         <Setter Property="BackgroundColor" Value="{StaticResource GvSurface}" />
         <Setter Property="Stroke" Value="{StaticResource GvStroke}" />
@@ -277,7 +259,6 @@
         </Setter>
     </Style>
 
-    <!-- ==================== 5. Chips ==================== -->
     <Style x:Key="ChipBorder" TargetType="Border">
         <Setter Property="BackgroundColor" Value="{StaticResource GvSurfaceMuted}" />
         <Setter Property="Stroke" Value="{StaticResource GvStroke}" />
@@ -316,7 +297,6 @@
         <Setter Property="TextColor" Value="{StaticResource GvSuccess}" />
     </Style>
 
-    <!-- ==================== 6. Botones ==================== -->
     <Style x:Key="PrimaryButton" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{StaticResource GvPrimary}" />
         <Setter Property="TextColor" Value="{StaticResource GvOnPrimary}" />
@@ -347,7 +327,6 @@
         <Setter Property="Padding" Value="0" />
     </Style>
 
-    <!-- ==================== 7. Formulario ==================== -->
     <Style x:Key="FormLabel" TargetType="Label">
         <Setter Property="FontFamily" Value="OpenSansSemibold" />
         <Setter Property="FontSize" Value="12" />

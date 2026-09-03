@@ -7,11 +7,6 @@
     x:DataType="vm:FormularioViewModel"
     Title="">
 
-    <!--
-        Formulario unico para agregar y editar. La pantalla no sabe en que modo esta:
-        se limita a mostrar lo que el ViewModel expone (TituloPantalla y
-        TextoBotonGuardar), que es lo que cambia segun venga o no un id en la ruta.
-    -->
     <ScrollView>
         <VerticalStackLayout Padding="20,18,20,32" Spacing="18">
 

@@ -3,17 +3,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!--
-        Paleta GameVault. Identidad "gaming": fondo casi negro azulado, violeta
-        eléctrico como color de marca y cian como acento secundario.
-        La app corre siempre en tema oscuro (App.xaml.cs fuerza UserAppTheme.Dark),
-        por eso no hay AppThemeBinding: un solo set de valores, sin ambigüedad.
-
-        Convención: todo token propio lleva el prefijo Gv para no chocar con los
-        nombres genéricos de la plantilla de MAUI.
-    -->
-
-    <!-- ==================== Superficies ==================== -->
     <Color x:Key="GvBackground">#0B0F17</Color>
     <Color x:Key="GvSurface">#141B26</Color>
     <Color x:Key="GvSurfaceElevated">#1B2431</Color>
@@ -21,14 +10,12 @@
     <Color x:Key="GvStroke">#2A3648</Color>
     <Color x:Key="GvStrokeSoft">#1F2937</Color>
 
-    <!-- ==================== Marca y acentos ==================== -->
     <Color x:Key="GvPrimary">#8B5CF6</Color>
     <Color x:Key="GvPrimaryDark">#6D28D9</Color>
     <Color x:Key="GvPrimarySoft">#2C2350</Color>
     <Color x:Key="GvAccent">#22D3EE</Color>
     <Color x:Key="GvAccentSoft">#0E3A44</Color>
 
-    <!-- ==================== Semánticos ==================== -->
     <Color x:Key="GvSuccess">#34D399</Color>
     <Color x:Key="GvSuccessSoft">#123A2E</Color>
     <Color x:Key="GvWarning">#FBBF24</Color>
@@ -36,15 +23,11 @@
     <Color x:Key="GvDanger">#FB7185</Color>
     <Color x:Key="GvDangerSoft">#3B1620</Color>
 
-    <!-- ==================== Tipografía ==================== -->
     <Color x:Key="GvTextPrimary">#F1F5F9</Color>
     <Color x:Key="GvTextSecondary">#94A3B8</Color>
     <Color x:Key="GvTextMuted">#64748B</Color>
     <Color x:Key="GvOnPrimary">#FFFFFF</Color>
 
-    <!-- ==================== Degradados ==================== -->
-    <!-- Velo que se superpone a la portada en DetallePage para que el título
-         se lea sobre cualquier imagen. -->
     <LinearGradientBrush x:Key="GvHeroScrim" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#000B0F17" Offset="0.0" />
         <GradientStop Color="#660B0F17" Offset="0.45" />
@@ -57,9 +40,6 @@
         <GradientStop Color="#22D3EE" Offset="1.0" />
     </LinearGradientBrush>
 
-    <!-- ==================== Alias de la plantilla ==================== -->
-    <!-- Se conservan estos nombres genéricos porque algunos controles nativos y
-         plantillas de MAUI los buscan por convención. -->
     <Color x:Key="Primary">#8B5CF6</Color>
     <Color x:Key="Secondary">#22D3EE</Color>
     <Color x:Key="Tertiary">#34D399</Color>

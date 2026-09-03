@@ -2,15 +2,6 @@
 
 namespace GameVault.Data;
 
-/// <summary>
-/// Implementación en memoria de <see cref="IVideojuegoRepository"/> para la Fase 1.
-///
-/// La lista es <c>static</c> a propósito: como todavía no hay inyección de dependencias,
-/// cada ViewModel construye su propio repositorio y todos tienen que ver la misma
-/// colección (si no, guardar en el formulario no se reflejaría en la lista). En la Fase 2
-/// esta clase se registra como singleton en <c>MauiProgram</c>, el <c>static</c>
-/// desaparece y no cambia nada más.
-/// </summary>
 public class VideojuegoRepository : IVideojuegoRepository
 {
     private static readonly List<Videojuego> Juegos = VideojuegoSeedData.Crear();
@@ -39,8 +30,6 @@ public class VideojuegoRepository : IVideojuegoRepository
     {
         lock (Candado)
         {
-            // Se devuelve una copia de la lista (no de los objetos) para que la UI no
-            // pueda alterar el orden interno del repositorio.
             IReadOnlyList<Videojuego> resultado = Juegos
                 .OrderBy(j => j.Titulo, StringComparer.CurrentCultureIgnoreCase)
                 .ToList();

@@ -9,12 +9,6 @@
     Title="Wishlist"
     Shell.NavBarIsVisible="False">
 
-    <!--
-        Pantalla raiz de la pestana Wishlist: solo los juegos con EsFavorito = true.
-        Reutiliza el mismo lenguaje visual de tarjetas de ListaPage para que las dos
-        pestanas se sientan como la misma app, cambiando el resumen del encabezado
-        (aqui interesa cuanto falta invertir, no cuanto vale lo que ya se tiene).
-    -->
     <Grid RowDefinitions="Auto,*">
 
         <VerticalStackLayout
