@@ -4,14 +4,6 @@ using GameVault.Models;
 
 namespace GameVault.ViewModels;
 
-/// <summary>
-/// ViewModel del detalle de un juego.
-///
-/// Implementa <see cref="IQueryAttributable"/> para recibir el Id que viaja en la
-/// query string de Shell ("detalle?id=7"). El parámetro solo se guarda; la carga real
-/// ocurre en OnAppearingAsync, de modo que al volver de editar el juego los datos se
-/// releen y la pantalla muestra los cambios.
-/// </summary>
 public class DetalleViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly IVideojuegoRepository _repositorio;
@@ -45,7 +37,6 @@ public class DetalleViewModel : BaseViewModel, IQueryAttributable
 
     public bool NoEncontrado => !HayJuego && !IsBusy;
 
-    /// <summary>Texto del botón de wishlist, que cambia según el estado actual.</summary>
     public string TextoFavorito =>
         Juego?.EsFavorito == true ? "Quitar de la wishlist" : "Agregar a la wishlist";
 
@@ -53,11 +44,6 @@ public class DetalleViewModel : BaseViewModel, IQueryAttributable
     public ICommand ToggleFavoritoCommand { get; }
     public ICommand VolverCommand { get; }
 
-    /// <summary>
-    /// Shell entrega aquí los parámetros de la query string. Llega antes de
-    /// OnAppearing, así que basta con guardar el Id y dejar que la carga la haga el
-    /// gancho de ciclo de vida.
-    /// </summary>
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         if (query.TryGetValue(AppRoutes.ParametroId, out var valor) &&
@@ -92,9 +78,6 @@ public class DetalleViewModel : BaseViewModel, IQueryAttributable
 
         await _repositorio.ToggleFavoritoAsync(Juego.Id);
 
-        // El repositorio muta la misma instancia, así que la referencia no cambia y
-        // SetProperty no dispararía nada: se notifica a mano para que las vistas
-        // vuelvan a resolver las rutas que cuelgan de Juego.
         RefrescarDerivados();
     }
 

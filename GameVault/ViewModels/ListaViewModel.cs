@@ -6,10 +6,6 @@ using GameVault.Models;
 
 namespace GameVault.ViewModels;
 
-/// <summary>
-/// ViewModel de la pantalla principal: toda la colección más un resumen de
-/// cuántos juegos hay, cuánto valen y cuántos están terminados.
-/// </summary>
 public class ListaViewModel : BaseViewModel
 {
     private readonly IVideojuegoRepository _repositorio;
@@ -19,11 +15,6 @@ public class ListaViewModel : BaseViewModel
     private int _totalCompletados;
     private string _valorTotal = "$0.00";
 
-    /// <summary>
-    /// El repositorio entra por constructor aunque hoy tenga un valor por defecto:
-    /// en la Fase 2 se borra el "?? new VideojuegoRepository()" y el contenedor de
-    /// DI resuelve la dependencia sin tocar nada más de esta clase.
-    /// </summary>
     public ListaViewModel(IVideojuegoRepository? repositorio = null)
     {
         _repositorio = repositorio ?? new VideojuegoRepository();
@@ -34,10 +25,6 @@ public class ListaViewModel : BaseViewModel
         RefrescarCommand = new Command(async () => await CargarAsync());
     }
 
-    /// <summary>
-    /// Colección observable: la CollectionView se entera sola de altas y bajas.
-    /// Es de solo lectura a propósito, siempre se muta con Clear/Add.
-    /// </summary>
     public ObservableCollection<Videojuego> Juegos { get; } = [];
 
     public ICommand VerDetalleCommand { get; }
@@ -64,11 +51,6 @@ public class ListaViewModel : BaseViewModel
 
     public bool HayJuegos => Juegos.Count > 0;
 
-    /// <summary>
-    /// Ciclo de vida: la página llama a esto desde OnAppearing, así que la lista se
-    /// vuelve a leer cada vez que la pantalla aparece. Es lo que hace que un juego
-    /// recién guardado en el formulario ya esté aquí al volver.
-    /// </summary>
     public override Task OnAppearingAsync() => CargarAsync();
 
     private Task CargarAsync() => EjecutarAsync(async () =>
@@ -88,7 +70,6 @@ public class ListaViewModel : BaseViewModel
     },
     "No se pudo cargar la colección");
 
-    /// <summary>Navega al detalle pasando el Id por query string.</summary>
     private static async Task VerDetalleAsync(Videojuego? juego)
     {
         if (juego is null)
@@ -99,6 +80,5 @@ public class ListaViewModel : BaseViewModel
         await Shell.Current.GoToAsync(AppRoutes.DetalleDe(juego.Id));
     }
 
-    /// <summary>Abre el formulario sin parámetros, es decir en modo agregar.</summary>
     private static Task AgregarAsync() => Shell.Current.GoToAsync(AppRoutes.Formulario);
 }
