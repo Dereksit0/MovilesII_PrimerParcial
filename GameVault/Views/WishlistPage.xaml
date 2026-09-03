@@ -2,13 +2,146 @@
 <ContentPage
     x:Class="GameVault.Views.WishlistPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:models="clr-namespace:GameVault.Models"
+    xmlns:vm="clr-namespace:GameVault.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Wishlist">
+    x:DataType="vm:WishlistViewModel"
+    Title="Wishlist"
+    Shell.NavBarIsVisible="False">
 
-    <Label
-        Text="Wishlist"
-        Style="{StaticResource PageTitleLabel}"
-        HorizontalOptions="Center"
-        VerticalOptions="Center" />
+    <Grid RowDefinitions="Auto,*">
+
+        <VerticalStackLayout
+            Grid.Row="0"
+            Padding="20,22,20,14"
+            Spacing="14">
+
+            <VerticalStackLayout Spacing="2">
+                <Label Style="{StaticResource SectionTitleLabel}" Text="Por conseguir" />
+                <Label Style="{StaticResource PageTitleLabel}" Text="{Binding TituloPantalla}" />
+            </VerticalStackLayout>
+
+            <Border Padding="16,14" Style="{StaticResource PanelBorder}">
+                <Grid ColumnDefinitions="*,1,*" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Style="{StaticResource StatValueLabel}" Text="{Binding TotalDeseados}" />
+                        <Label Style="{StaticResource StatCaptionLabel}" Text="Juegos deseados" />
+                    </VerticalStackLayout>
+                    <BoxView Grid.Column="1" WidthRequest="1" />
+                    <VerticalStackLayout Grid.Column="2" Spacing="3">
+                        <Label Style="{StaticResource PriceLabel}" Text="{Binding InversionEstimada}" />
+                        <Label Style="{StaticResource StatCaptionLabel}" Text="Inversion estimada" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Label
+                IsVisible="{Binding TieneError}"
+                Style="{StaticResource ErrorLabel}"
+                Text="{Binding MensajeError}" />
+
+        </VerticalStackLayout>
+
+        <RefreshView
+            Grid.Row="1"
+            Command="{Binding RefrescarCommand}"
+            IsRefreshing="{Binding IsBusy}">
+
+            <CollectionView ItemsSource="{Binding Deseados}" SelectionMode="None">
+
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="12" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout
+                        Padding="40"
+                        Spacing="8"
+                        VerticalOptions="Center">
+                        <Label
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource CardTitleLabel}"
+                            Text="Tu wishlist esta vacia" />
+                        <Label
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource MutedLabel}"
+                            Text="Abre un juego y marcalo como deseado, o agrega uno nuevo con el boton +." />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Videojuego">
+                        <Border Margin="20,0" Style="{StaticResource CardBorder}">
+
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WishlistViewModel}}, Path=VerDetalleCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="94,*" ColumnSpacing="14">
+
+                                <Border
+                                    HeightRequest="126"
+                                    Style="{StaticResource CoverBorder}"
+                                    VerticalOptions="Start"
+                                    WidthRequest="94">
+                                    <Image
+                                        Aspect="AspectFill"
+                                        HeightRequest="126"
+                                        Source="{Binding ImagenMostrada}"
+                                        WidthRequest="94" />
+                                </Border>
+
+                                <VerticalStackLayout
+                                    Grid.Column="1"
+                                    Spacing="8"
+                                    VerticalOptions="Center">
+
+                                    <Label
+                                        LineBreakMode="TailTruncation"
+                                        MaxLines="2"
+                                        Style="{StaticResource CardTitleLabel}"
+                                        Text="{Binding Titulo}" />
+
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Border Style="{StaticResource ChipBorder}">
+                                            <Label Style="{StaticResource ChipLabel}" Text="{Binding Plataforma}" />
+                                        </Border>
+                                        <Border Style="{StaticResource ChipBorder}">
+                                            <Label Style="{StaticResource ChipLabel}" Text="{Binding Genero}" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+
+                                    <Label Style="{StaticResource MutedLabel}" Text="Precio objetivo de mercado" />
+
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label
+                                            Style="{StaticResource PriceLabel}"
+                                            Text="{Binding ValorFormateado}"
+                                            VerticalOptions="Center" />
+                                        <Border Grid.Column="1" Style="{StaticResource AccentChipBorder}">
+                                            <Label Style="{StaticResource AccentChipLabel}" Text="{Binding Estado}" />
+                                        </Border>
+                                    </Grid>
+
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <Button
+            Grid.Row="1"
+            Margin="0,0,22,26"
+            Command="{Binding AgregarCommand}"
+            HorizontalOptions="End"
+            Style="{StaticResource FabButton}"
+            Text="+"
+            VerticalOptions="End" />
+
+    </Grid>
 
 </ContentPage>
