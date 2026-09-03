@@ -5,8 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Wishlist">
 
-    <!-- Esqueleto creado junto con las rutas del Shell. La implementacion completa
-         de esta pantalla llega en la rama omar. -->
     <Label
         Text="Wishlist"
         Style="{StaticResource PageTitleLabel}"

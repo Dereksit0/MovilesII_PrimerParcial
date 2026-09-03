@@ -2,16 +2,6 @@
 
 namespace GameVault.Data;
 
-/// <summary>
-/// Datos de prueba hardcodeados de la Fase 1.
-///
-/// Las portadas apuntan a URLs reales y verificadas del CDN público de Steam y de
-/// libretro-thumbnails. Se descartó Wikimedia: exige un User-Agent informativo y
-/// responde 403 a HttpClient, que no manda ninguno, así que las portadas salían en
-/// blanco. Cuando la Fase 4 conecte la API REST esta clase se elimina o queda como
-/// fallback offline: nadie fuera de <see cref="VideojuegoRepository"/>
-/// la referencia.
-/// </summary>
 public static class VideojuegoSeedData
 {
     public static List<Videojuego> Crear() =>

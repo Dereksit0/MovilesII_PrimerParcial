@@ -6,9 +6,6 @@ public partial class App : Application
     {
         InitializeComponent();
 
-        // GameVault tiene una identidad visual oscura fija: Colors.xaml define un
-        // solo juego de valores (sin AppThemeBinding), así que se fuerza el tema
-        // para que el sistema operativo no intente aplicar el claro.
         UserAppTheme = AppTheme.Dark;
     }
 
