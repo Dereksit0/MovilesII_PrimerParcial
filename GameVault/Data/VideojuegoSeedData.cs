@@ -185,6 +185,102 @@ public static class VideojuegoSeedData
             ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1079800/library_600x900.jpg",
             EsFavorito = false,
             Completado = false
+        },
+        new Videojuego
+        {
+            Id = 16,
+            Titulo = "Fortnite",
+            Plataforma = "PC",
+            Genero = "Shooter",
+            Estado = "En colección",
+            ValorEstimado = 0.00m,
+            ImagenUrl = "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d7/72/b0/d772b082-f156-4022-aadf-90c63347508b/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+            EsFavorito = false,
+            Completado = false
+        },
+        new Videojuego
+        {
+            Id = 17,
+            Titulo = "Gears 5",
+            Plataforma = "Xbox Series X",
+            Genero = "Shooter",
+            Estado = "En colección",
+            ValorEstimado = 599.00m,
+            ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1097840/library_600x900.jpg",
+            EsFavorito = false,
+            Completado = true
+        },
+        new Videojuego
+        {
+            Id = 18,
+            Titulo = "Halo: The Master Chief Collection",
+            Plataforma = "Xbox Series X",
+            Genero = "Shooter",
+            Estado = "Completo en caja (CIB)",
+            ValorEstimado = 749.00m,
+            ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/976730/library_600x900.jpg",
+            EsFavorito = false,
+            Completado = true
+        },
+        new Videojuego
+        {
+            Id = 19,
+            Titulo = "Grand Theft Auto V",
+            Plataforma = "PS5",
+            Genero = "Aventura",
+            Estado = "En colección",
+            ValorEstimado = 899.00m,
+            ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900.jpg",
+            EsFavorito = false,
+            Completado = true
+        },
+        new Videojuego
+        {
+            Id = 20,
+            Titulo = "Marvel\u0027s Spider-Man",
+            Plataforma = "PS5",
+            Genero = "Aventura",
+            Estado = "Deseado",
+            ValorEstimado = 1199.00m,
+            ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1817070/library_600x900.jpg",
+            EsFavorito = true,
+            Completado = false
+        },
+        new Videojuego
+        {
+            Id = 21,
+            Titulo = "EA SPORTS FC 26",
+            Plataforma = "PS5",
+            Genero = "Deportes",
+            Estado = "En colección",
+            ValorEstimado = 1499.00m,
+            ImagenUrl = "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/36/22/fd/3622fd10-54c3-8a4f-946f-e9ef1b8a8c16/AppIcon-0-0-1x_U007emarketing-0-11-0-0-85-220.png/512x512bb.jpg",
+            EsFavorito = false,
+            Completado = false
+        },
+        new Videojuego
+        {
+            Id = 22,
+            Titulo = "Roblox",
+            Plataforma = "PC",
+            Genero = "Aventura",
+            Estado = "En colección",
+            ValorEstimado = 0.00m,
+            ImagenUrl = "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/73/f6/b9/73f6b9d7-6a5c-e9db-57d6-dd82f64038f3/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+            EsFavorito = false,
+            Completado = false
+        },
+        new Videojuego
+        {
+            Id = 23,
+            Titulo = "The Forest",
+            Plataforma = "PC",
+            Genero = "Terror",
+            Estado = "En colección",
+            ValorEstimado = 199.00m,
+            ImagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/242760/library_600x900.jpg",
+            EsFavorito = false,
+            Completado = true
         }
     ];
 }
