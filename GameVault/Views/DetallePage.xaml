@@ -2,15 +2,140 @@
 <ContentPage
     x:Class="GameVault.Views.DetallePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+    xmlns:vm="clr-namespace:GameVault.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Detalle">
+    x:DataType="vm:DetalleViewModel"
+    Title="">
 
-    <!-- Esqueleto creado junto con las rutas del Shell. La implementacion completa
-         de esta pantalla llega en la rama santiago. -->
-    <Label
-        Text="Detalle"
-        Style="{StaticResource PageTitleLabel}"
-        HorizontalOptions="Center"
-        VerticalOptions="Center" />
+    <!--
+        Pantalla hero: la portada ocupa la parte superior a sangre, con un velo
+        degradado encima para que el titulo se lea sobre cualquier imagen, y la ficha
+        organizada debajo. La NavBar del Shell queda visible pero sin titulo, porque
+        es la que aporta el boton de retroceso.
+    -->
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <Grid HeightRequest="360" IsVisible="{Binding HayJuego}">
+
+                <Image Aspect="AspectFill" Source="{Binding Juego.ImagenMostrada}" />
+
+                <shapes:Rectangle Fill="{StaticResource GvHeroScrim}" />
+
+                <VerticalStackLayout
+                    Padding="20,0,20,22"
+                    Spacing="10"
+                    VerticalOptions="End">
+
+                    <HorizontalStackLayout Spacing="6">
+                        <Border Style="{StaticResource AccentChipBorder}">
+                            <Label Style="{StaticResource AccentChipLabel}" Text="{Binding Juego.Plataforma}" />
+                        </Border>
+                        <Border Style="{StaticResource ChipBorder}">
+                            <Label Style="{StaticResource ChipLabel}" Text="{Binding Juego.Genero}" />
+                        </Border>
+                        <Border IsVisible="{Binding Juego.EsFavorito}" Style="{StaticResource SuccessChipBorder}">
+                            <Label Style="{StaticResource SuccessChipLabel}" Text="En wishlist" />
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <Label Style="{StaticResource PageTitleLabel}" Text="{Binding Juego.Titulo}" />
+
+                </VerticalStackLayout>
+            </Grid>
+
+            <VerticalStackLayout
+                Padding="20,18,20,30"
+                Spacing="16">
+
+                <Label
+                    IsVisible="{Binding TieneError}"
+                    Style="{StaticResource ErrorLabel}"
+                    Text="{Binding MensajeError}" />
+
+                <VerticalStackLayout IsVisible="{Binding HayJuego}" Spacing="16">
+
+                    <Border Padding="16,14" Style="{StaticResource PanelBorder}">
+                        <Grid ColumnDefinitions="*,1,Auto" ColumnSpacing="14">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Style="{StaticResource StatCaptionLabel}" Text="Valor estimado" />
+                                <Label Style="{StaticResource PriceLabel}" Text="{Binding Juego.ValorFormateado}" />
+                            </VerticalStackLayout>
+                            <BoxView Grid.Column="1" WidthRequest="1" />
+                            <VerticalStackLayout Grid.Column="2" Spacing="3">
+                                <Label Style="{StaticResource StatCaptionLabel}" Text="Progreso" />
+                                <Label Style="{StaticResource StatValueLabel}" Text="{Binding Juego.EtiquetaProgreso}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource PanelBorder}">
+                        <VerticalStackLayout Spacing="14">
+
+                            <Label Style="{StaticResource SectionTitleLabel}" Text="Ficha del juego" />
+
+                            <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+                                <Label Style="{StaticResource MutedLabel}" Text="Plataforma" />
+                                <Label
+                                    Grid.Column="1"
+                                    Style="{StaticResource MetaLabel}"
+                                    Text="{Binding Juego.Plataforma}" />
+
+                                <Label Grid.Row="1" Style="{StaticResource MutedLabel}" Text="Genero" />
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Style="{StaticResource MetaLabel}"
+                                    Text="{Binding Juego.Genero}" />
+
+                                <Label Grid.Row="2" Style="{StaticResource MutedLabel}" Text="Estado" />
+                                <Label
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Style="{StaticResource MetaLabel}"
+                                    Text="{Binding Juego.Estado}" />
+                            </Grid>
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Button
+                            Command="{Binding EditarCommand}"
+                            Style="{StaticResource PrimaryButton}"
+                            Text="Editar" />
+                        <Button
+                            Grid.Column="1"
+                            Command="{Binding ToggleFavoritoCommand}"
+                            Style="{StaticResource AccentButton}"
+                            Text="{Binding TextoFavorito}" />
+                    </Grid>
+
+                    <Button
+                        Command="{Binding VolverCommand}"
+                        Style="{StaticResource SecondaryButton}"
+                        Text="Volver a la coleccion" />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                    Padding="0,60"
+                    IsVisible="{Binding NoEncontrado}"
+                    Spacing="8">
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource CardTitleLabel}"
+                        Text="Juego no encontrado" />
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource MutedLabel}"
+                        Text="Puede que se haya eliminado de la coleccion." />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
