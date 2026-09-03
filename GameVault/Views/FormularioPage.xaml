@@ -2,15 +2,169 @@
 <ContentPage
     x:Class="GameVault.Views.FormularioPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:vm="clr-namespace:GameVault.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Formulario">
+    x:DataType="vm:FormularioViewModel"
+    Title="">
 
-    <!-- Esqueleto creado junto con las rutas del Shell. La implementacion completa
-         de esta pantalla llega en la rama omar. -->
-    <Label
-        Text="Formulario"
-        Style="{StaticResource PageTitleLabel}"
-        HorizontalOptions="Center"
-        VerticalOptions="Center" />
+    <!--
+        Formulario unico para agregar y editar. La pantalla no sabe en que modo esta:
+        se limita a mostrar lo que el ViewModel expone (TituloPantalla y
+        TextoBotonGuardar), que es lo que cambia segun venga o no un id en la ruta.
+    -->
+    <ScrollView>
+        <VerticalStackLayout Padding="20,18,20,32" Spacing="18">
+
+            <VerticalStackLayout Spacing="2">
+                <Label Style="{StaticResource SectionTitleLabel}" Text="Ficha del juego" />
+                <Label Style="{StaticResource PageTitleLabel}" Text="{Binding TituloPantalla}" />
+            </VerticalStackLayout>
+
+            <Border IsVisible="{Binding HayVistaPrevia}" Style="{StaticResource PanelBorder}">
+                <Grid ColumnDefinitions="94,*" ColumnSpacing="14">
+                    <Border
+                        HeightRequest="126"
+                        Style="{StaticResource CoverBorder}"
+                        VerticalOptions="Start"
+                        WidthRequest="94">
+                        <Image
+                            Aspect="AspectFill"
+                            HeightRequest="126"
+                            Source="{Binding ImagenUrl}"
+                            WidthRequest="94" />
+                    </Border>
+                    <VerticalStackLayout
+                        Grid.Column="1"
+                        Spacing="6"
+                        VerticalOptions="Center">
+                        <Label Style="{StaticResource SectionTitleLabel}" Text="Vista previa" />
+                        <Label
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2"
+                            Style="{StaticResource CardTitleLabel}"
+                            Text="{Binding Titulo}" />
+                        <Label Style="{StaticResource MutedLabel}" Text="Asi se vera la portada en las tarjetas." />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <VerticalStackLayout Spacing="14">
+
+                <VerticalStackLayout>
+                    <Label Style="{StaticResource FormLabel}" Text="TITULO" />
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Entry Placeholder="Ej: Chrono Trigger" Text="{Binding Titulo}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource FormLabel}" Text="PLATAFORMA" />
+                        <Border Style="{StaticResource FieldBorder}">
+                            <Picker
+                                ItemsSource="{Binding Plataformas}"
+                                SelectedItem="{Binding Plataforma}"
+                                Title="Elegir" />
+                        </Border>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Style="{StaticResource FormLabel}" Text="GENERO" />
+                        <Border Style="{StaticResource FieldBorder}">
+                            <Picker
+                                ItemsSource="{Binding Generos}"
+                                SelectedItem="{Binding Genero}"
+                                Title="Elegir" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <VerticalStackLayout>
+                    <Label Style="{StaticResource FormLabel}" Text="ESTADO EN LA COLECCION" />
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Picker
+                            ItemsSource="{Binding Estados}"
+                            SelectedItem="{Binding Estado}"
+                            Title="Elegir" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout>
+                    <Label Style="{StaticResource FormLabel}" Text="VALOR ESTIMADO (USD)" />
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Entry
+                            Keyboard="Numeric"
+                            Placeholder="0.00"
+                            Text="{Binding ValorTexto}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout>
+                    <Label Style="{StaticResource FormLabel}" Text="URL DE LA PORTADA" />
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Entry
+                            Keyboard="Url"
+                            Placeholder="https://..."
+                            Text="{Binding ImagenUrl}" />
+                    </Border>
+                    <Label
+                        Margin="2,6,0,0"
+                        Style="{StaticResource MutedLabel}"
+                        Text="En la Fase 3 este campo convivira con una foto tomada desde la camara o la galeria." />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource PanelBorder}">
+                <VerticalStackLayout Spacing="14">
+
+                    <Label Style="{StaticResource SectionTitleLabel}" Text="Marcadores" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                            <Label Style="{StaticResource MetaLabel}" Text="Lo quiero conseguir" />
+                            <Label Style="{StaticResource MutedLabel}" Text="Aparece en la pestana Wishlist" />
+                        </VerticalStackLayout>
+                        <Switch
+                            Grid.Column="1"
+                            IsToggled="{Binding EsFavorito}"
+                            VerticalOptions="Center" />
+                    </Grid>
+
+                    <BoxView HeightRequest="1" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                            <Label Style="{StaticResource MetaLabel}" Text="Ya lo termine" />
+                            <Label Style="{StaticResource MutedLabel}" Text="Suma al contador de terminados" />
+                        </VerticalStackLayout>
+                        <Switch
+                            Grid.Column="1"
+                            IsToggled="{Binding Completado}"
+                            VerticalOptions="Center" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <Label
+                IsVisible="{Binding TieneError}"
+                Style="{StaticResource ErrorLabel}"
+                Text="{Binding MensajeError}" />
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button
+                    Command="{Binding CancelarCommand}"
+                    Style="{StaticResource SecondaryButton}"
+                    Text="Cancelar" />
+                <Button
+                    Grid.Column="1"
+                    Command="{Binding GuardarCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Style="{StaticResource PrimaryButton}"
+                    Text="{Binding TextoBotonGuardar}" />
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
