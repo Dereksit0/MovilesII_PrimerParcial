@@ -1,44 +1,57 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
-<ResourceDictionary 
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
+    <Color x:Key="GvBackground">#0B0F17</Color>
+    <Color x:Key="GvSurface">#141B26</Color>
+    <Color x:Key="GvSurfaceElevated">#1B2431</Color>
+    <Color x:Key="GvSurfaceMuted">#212C3B</Color>
+    <Color x:Key="GvStroke">#2A3648</Color>
+    <Color x:Key="GvStrokeSoft">#1F2937</Color>
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <Color x:Key="GvPrimary">#8B5CF6</Color>
+    <Color x:Key="GvPrimaryDark">#6D28D9</Color>
+    <Color x:Key="GvPrimarySoft">#2C2350</Color>
+    <Color x:Key="GvAccent">#22D3EE</Color>
+    <Color x:Key="GvAccentSoft">#0E3A44</Color>
 
-    <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
-    <Color x:Key="Magenta">#D600AA</Color>
-    <Color x:Key="MidnightBlue">#190649</Color>
-    <Color x:Key="OffBlack">#1f1f1f</Color>
+    <Color x:Key="GvSuccess">#34D399</Color>
+    <Color x:Key="GvSuccessSoft">#123A2E</Color>
+    <Color x:Key="GvWarning">#FBBF24</Color>
+    <Color x:Key="GvWarningSoft">#3A2E0E</Color>
+    <Color x:Key="GvDanger">#FB7185</Color>
+    <Color x:Key="GvDangerSoft">#3B1620</Color>
 
-    <Color x:Key="Gray100">#E1E1E1</Color>
-    <Color x:Key="Gray200">#C8C8C8</Color>
-    <Color x:Key="Gray300">#ACACAC</Color>
-    <Color x:Key="Gray400">#919191</Color>
-    <Color x:Key="Gray500">#6E6E6E</Color>
-    <Color x:Key="Gray600">#404040</Color>
-    <Color x:Key="Gray900">#212121</Color>
-    <Color x:Key="Gray950">#141414</Color>
+    <Color x:Key="GvTextPrimary">#F1F5F9</Color>
+    <Color x:Key="GvTextSecondary">#94A3B8</Color>
+    <Color x:Key="GvTextMuted">#64748B</Color>
+    <Color x:Key="GvOnPrimary">#FFFFFF</Color>
 
-    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
-    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
-    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
-    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
-    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
+    <LinearGradientBrush x:Key="GvHeroScrim" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#000B0F17" Offset="0.0" />
+        <GradientStop Color="#660B0F17" Offset="0.45" />
+        <GradientStop Color="#F20B0F17" Offset="0.78" />
+        <GradientStop Color="#FF0B0F17" Offset="1.0" />
+    </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}"/>
-    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}"/>
-    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}"/>
-    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}"/>
-    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}"/>
-    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
-    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
-    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
+    <LinearGradientBrush x:Key="GvBrandGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#8B5CF6" Offset="0.0" />
+        <GradientStop Color="#22D3EE" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <Color x:Key="Primary">#8B5CF6</Color>
+    <Color x:Key="Secondary">#22D3EE</Color>
+    <Color x:Key="Tertiary">#34D399</Color>
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#000000</Color>
+    <Color x:Key="Gray100">#E2E8F0</Color>
+    <Color x:Key="Gray200">#CBD5E1</Color>
+    <Color x:Key="Gray300">#94A3B8</Color>
+    <Color x:Key="Gray400">#64748B</Color>
+    <Color x:Key="Gray500">#475569</Color>
+    <Color x:Key="Gray600">#334155</Color>
+    <Color x:Key="Gray900">#141B26</Color>
+    <Color x:Key="Gray950">#0B0F17</Color>
+
 </ResourceDictionary>

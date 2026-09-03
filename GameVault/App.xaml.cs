@@ -1,16 +1,19 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace GameVault;
+﻿namespace GameVault;
 
 public partial class App : Application
 {
-	public App()
-	{
-		InitializeComponent();
-	}
+    public App()
+    {
+        InitializeComponent();
 
-	protected override Window CreateWindow(IActivationState? activationState)
-	{
-		return new Window(new AppShell());
-	}
+        UserAppTheme = AppTheme.Dark;
+    }
+
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new AppShell())
+        {
+            Title = "GameVault"
+        };
+    }
 }
