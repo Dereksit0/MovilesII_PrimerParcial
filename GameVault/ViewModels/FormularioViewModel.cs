@@ -5,14 +5,6 @@ using GameVault.Models;
 
 namespace GameVault.ViewModels;
 
-/// <summary>
-/// ViewModel del formulario, que se usa para las dos operaciones.
-///
-/// Si Shell no manda parámetros, la pantalla trabaja en modo agregar; si llega
-/// "formulario?id=7", se carga ese juego y pasa a modo editar. Toda la pantalla
-/// (título, texto del botón, validaciones) se deriva de ese único interruptor,
-/// así que no hay dos vistas ni dos ViewModels que mantener.
-/// </summary>
 public class FormularioViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly IVideojuegoRepository _repositorio;
@@ -44,7 +36,6 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
         ActualizarTextosDeModo();
     }
 
-    // Catálogos de los Pickers.
     public IReadOnlyList<string> Plataformas { get; }
     public IReadOnlyList<string> Generos { get; }
     public IReadOnlyList<string> Estados { get; }
@@ -64,7 +55,6 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
         }
     }
 
-    /// <summary>Texto del botón principal, distinto en cada modo.</summary>
     public string TextoBotonGuardar => EsEdicion ? "Guardar cambios" : "Agregar a la coleccion";
 
     public string Titulo
@@ -91,10 +81,6 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
         set => SetProperty(ref _estado, value);
     }
 
-    /// <summary>
-    /// El valor se maneja como texto porque un Entry entrega texto: así se puede
-    /// validar y avisar al usuario en vez de tragarse un error de conversión.
-    /// </summary>
     public string ValorTexto
     {
         get => _valorTexto;
@@ -127,10 +113,6 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
         set => SetProperty(ref _completado, value);
     }
 
-    /// <summary>
-    /// Shell entrega aquí lo que venga en la query string. Sin parámetro "id" la
-    /// pantalla queda en modo agregar.
-    /// </summary>
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         if (query.TryGetValue(AppRoutes.ParametroId, out var valor) &&
@@ -146,15 +128,9 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
             EsEdicion = false;
         }
 
-        // Los parámetros pueden cambiar entre navegaciones (editar un juego y luego
-        // agregar otro reutilizan la misma página), así que se fuerza la recarga.
         _yaCargado = false;
     }
 
-    /// <summary>
-    /// Solo carga la primera vez tras cada navegación: si el usuario vuelve a la
-    /// pantalla (por ejemplo tras minimizar la app) no se le borra lo que escribió.
-    /// </summary>
     public override async Task OnAppearingAsync()
     {
         if (_yaCargado)
@@ -203,7 +179,6 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
 
         var juego = new Videojuego
         {
-            // Id 0 hace que el repositorio inserte; cualquier otro valor actualiza.
             Id = _juegoId,
             Titulo = Titulo.Trim(),
             Plataforma = Plataforma!,
@@ -217,18 +192,12 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
 
         await _repositorio.GuardarAsync(juego);
 
-        // ".." saca la pagina de la pila y devuelve a la pestana desde la que se
-        // abrio; su OnAppearing recarga la lista y el juego ya aparece.
         await Shell.Current.GoToAsync("..");
     },
     "No se pudo guardar el juego");
 
     private static Task CancelarAsync() => Shell.Current.GoToAsync("..");
 
-    /// <summary>
-    /// Validación de la Fase 1: campos obligatorios y valor numérico. Se acepta punto
-    /// o coma decimal porque el teclado numérico cambia según el idioma del equipo.
-    /// </summary>
     private bool TryValidar(out decimal valorEstimado)
     {
         valorEstimado = 0m;

@@ -6,13 +6,6 @@ using GameVault.Models;
 
 namespace GameVault.ViewModels;
 
-/// <summary>
-/// ViewModel de la wishlist: los juegos con EsFavorito = true, es decir los que
-/// todavía no se tienen y se quieren conseguir.
-///
-/// El filtro vive en el repositorio (GetFavoritosAsync) y no aquí, para que en la
-/// Fase 4 pueda convertirse en un query contra la API sin tocar esta clase.
-/// </summary>
 public class WishlistViewModel : BaseViewModel
 {
     private readonly IVideojuegoRepository _repositorio;
@@ -43,7 +36,6 @@ public class WishlistViewModel : BaseViewModel
         private set => SetProperty(ref _totalDeseados, value);
     }
 
-    /// <summary>Cuánto costaría completar la wishlist entera.</summary>
     public string InversionEstimada
     {
         get => _inversionEstimada;
@@ -52,10 +44,6 @@ public class WishlistViewModel : BaseViewModel
 
     public bool HayDeseados => Deseados.Count > 0;
 
-    /// <summary>
-    /// Ciclo de vida: al volver del detalle, donde se puede quitar o poner un juego
-    /// en la wishlist, esta pantalla se vuelve a leer y la lista queda al día.
-    /// </summary>
     public override Task OnAppearingAsync() => CargarAsync();
 
     private Task CargarAsync() => EjecutarAsync(async () =>
