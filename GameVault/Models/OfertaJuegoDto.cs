@@ -25,6 +25,9 @@ public class OfertaJuegoDto
     [JsonPropertyName("steamRatingText")]
     public string? SteamRatingText { get; set; }
 
+    [JsonPropertyName("thumb")]
+    public string? Thumb { get; set; }
+
     [JsonPropertyName("metacriticScore")]
     public string? MetacriticScore { get; set; }
 }
