@@ -6,6 +6,8 @@ public static class AppRoutes
 
     public const string Wishlist = "//wishlist";
 
+    public const string Terminados = "//terminados";
+
     public const string Detalle = "detalle";
 
     public const string Formulario = "formulario";
