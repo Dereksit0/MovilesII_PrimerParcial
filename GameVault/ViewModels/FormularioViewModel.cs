@@ -1,176 +1,118 @@
 ﻿using System.Globalization;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GameVault.Data;
 using GameVault.Models;
 
 namespace GameVault.ViewModels;
 
-public class FormularioViewModel : BaseViewModel, IQueryAttributable
+[QueryProperty(nameof(VideojuegoId), AppRoutes.ParametroId)]
+public partial class FormularioViewModel : BaseViewModel
 {
     private readonly IVideojuegoRepository _repositorio;
 
-    private int _juegoId;
-    private bool _yaCargado;
-    private bool _esEdicion;
+    private int _idEnEdicion;
+    private bool _preparado;
 
-    private string _titulo = string.Empty;
-    private string? _plataforma;
-    private string? _genero;
-    private string? _estado;
-    private string _valorTexto = string.Empty;
-    private string _imagenUrl = string.Empty;
-    private bool _esFavorito;
-    private bool _completado;
-
-    public FormularioViewModel(IVideojuegoRepository? repositorio = null)
+    public FormularioViewModel(IVideojuegoRepository repositorio)
     {
-        _repositorio = repositorio ?? new VideojuegoRepository();
+        _repositorio = repositorio;
 
-        Plataformas = _repositorio.GetPlataformas();
-        Generos = _repositorio.GetGeneros();
-        Estados = _repositorio.GetEstados();
+        Plataformas = repositorio.ObtenerPlataformas();
+        Generos = repositorio.ObtenerGeneros();
+        Estados = repositorio.ObtenerEstados();
 
-        GuardarCommand = new Command(async () => await GuardarAsync());
-        CancelarCommand = new Command(async () => await CancelarAsync());
-
-        ActualizarTextosDeModo();
+        VideojuegoId = string.Empty;
+        Titulo = string.Empty;
+        ValorTexto = string.Empty;
+        ImagenUrl = string.Empty;
+        TituloPantalla = "Nuevo juego";
     }
 
     public IReadOnlyList<string> Plataformas { get; }
+
     public IReadOnlyList<string> Generos { get; }
+
     public IReadOnlyList<string> Estados { get; }
 
-    public ICommand GuardarCommand { get; }
-    public ICommand CancelarCommand { get; }
+    [ObservableProperty]
+    public partial string VideojuegoId { get; set; }
 
-    public bool EsEdicion
-    {
-        get => _esEdicion;
-        private set
-        {
-            if (SetProperty(ref _esEdicion, value))
-            {
-                ActualizarTextosDeModo();
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial string Titulo { get; set; }
 
-    public string TextoBotonGuardar => EsEdicion ? "Guardar cambios" : "Agregar a la coleccion";
+    [ObservableProperty]
+    public partial string? Plataforma { get; set; }
 
-    public string Titulo
-    {
-        get => _titulo;
-        set => SetProperty(ref _titulo, value);
-    }
+    [ObservableProperty]
+    public partial string? Genero { get; set; }
 
-    public string? Plataforma
-    {
-        get => _plataforma;
-        set => SetProperty(ref _plataforma, value);
-    }
+    [ObservableProperty]
+    public partial string? Estado { get; set; }
 
-    public string? Genero
-    {
-        get => _genero;
-        set => SetProperty(ref _genero, value);
-    }
+    [ObservableProperty]
+    public partial string ValorTexto { get; set; }
 
-    public string? Estado
-    {
-        get => _estado;
-        set => SetProperty(ref _estado, value);
-    }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HayVistaPrevia))]
+    public partial string ImagenUrl { get; set; }
 
-    public string ValorTexto
-    {
-        get => _valorTexto;
-        set => SetProperty(ref _valorTexto, value);
-    }
+    [ObservableProperty]
+    public partial bool EsFavorito { get; set; }
 
-    public string ImagenUrl
-    {
-        get => _imagenUrl;
-        set
-        {
-            if (SetProperty(ref _imagenUrl, value))
-            {
-                OnPropertyChanged(nameof(HayVistaPrevia));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial bool Completado { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TextoBotonGuardar))]
+    public partial bool EsEdicion { get; set; }
 
     public bool HayVistaPrevia => !string.IsNullOrWhiteSpace(ImagenUrl);
 
-    public bool EsFavorito
-    {
-        get => _esFavorito;
-        set => SetProperty(ref _esFavorito, value);
-    }
+    public string TextoBotonGuardar => EsEdicion ? "Guardar cambios" : "Agregar a la coleccion";
 
-    public bool Completado
+    [RelayCommand]
+    private void Preparar()
     {
-        get => _completado;
-        set => SetProperty(ref _completado, value);
-    }
-
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
-    {
-        if (query.TryGetValue(AppRoutes.ParametroId, out var valor) &&
-            int.TryParse(Convert.ToString(valor), out var id) &&
-            id > 0)
-        {
-            _juegoId = id;
-            EsEdicion = true;
-        }
-        else
-        {
-            _juegoId = 0;
-            EsEdicion = false;
-        }
-
-        _yaCargado = false;
-    }
-
-    public override async Task OnAppearingAsync()
-    {
-        if (_yaCargado)
+        if (_preparado)
         {
             return;
         }
 
-        _yaCargado = true;
+        _preparado = true;
+        MensajeError = null;
 
-        if (!EsEdicion)
+        if (!int.TryParse(VideojuegoId, out var id) || id <= 0)
         {
-            LimpiarFormulario();
+            EntrarEnModoAlta();
             return;
         }
 
-        await EjecutarAsync(async () =>
+        var juego = _repositorio.ObtenerPorId(id);
+
+        if (juego is null)
         {
-            var juego = await _repositorio.GetByIdAsync(_juegoId);
+            EntrarEnModoAlta();
+            MensajeError = "No se encontro el juego que se queria editar.";
+            return;
+        }
 
-            if (juego is null)
-            {
-                MensajeError = "No se encontro el juego que se queria editar.";
-                EsEdicion = false;
-                _juegoId = 0;
-                return;
-            }
+        _idEnEdicion = juego.Id;
+        EsEdicion = true;
+        TituloPantalla = "Editar juego";
 
-            Titulo = juego.Titulo;
-            Plataforma = juego.Plataforma;
-            Genero = juego.Genero;
-            Estado = juego.Estado;
-            ValorTexto = juego.ValorEstimado.ToString("0.##", CultureInfo.InvariantCulture);
-            ImagenUrl = juego.ImagenUrl;
-            EsFavorito = juego.EsFavorito;
-            Completado = juego.Completado;
-        },
-        "No se pudo cargar el juego");
+        Titulo = juego.Titulo;
+        Plataforma = juego.Plataforma;
+        Genero = juego.Genero;
+        Estado = juego.Estado;
+        ValorTexto = juego.ValorEstimado.ToString("0.##", CultureInfo.InvariantCulture);
+        ImagenUrl = juego.ImagenUrl;
+        EsFavorito = juego.EsFavorito;
+        Completado = juego.Completado;
     }
 
-    private Task GuardarAsync() => EjecutarAsync(async () =>
+    [RelayCommand]
+    private async Task GuardarAsync()
     {
         if (!TryValidar(out var valorEstimado))
         {
@@ -179,7 +121,7 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
 
         var juego = new Videojuego
         {
-            Id = _juegoId,
+            Id = _idEnEdicion,
             Titulo = Titulo.Trim(),
             Plataforma = Plataforma!,
             Genero = Genero!,
@@ -190,13 +132,38 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
             Completado = Completado
         };
 
-        await _repositorio.GuardarAsync(juego);
+        if (EsEdicion)
+        {
+            _repositorio.Actualizar(juego);
+        }
+        else
+        {
+            _repositorio.Agregar(juego);
+        }
 
         await Shell.Current.GoToAsync("..");
-    },
-    "No se pudo guardar el juego");
+    }
 
+    [RelayCommand]
     private static Task CancelarAsync() => Shell.Current.GoToAsync("..");
+
+    partial void OnVideojuegoIdChanged(string value) => _preparado = false;
+
+    private void EntrarEnModoAlta()
+    {
+        _idEnEdicion = 0;
+        EsEdicion = false;
+        TituloPantalla = "Nuevo juego";
+
+        Titulo = string.Empty;
+        Plataforma = null;
+        Genero = null;
+        Estado = null;
+        ValorTexto = string.Empty;
+        ImagenUrl = string.Empty;
+        EsFavorito = false;
+        Completado = false;
+    }
 
     private bool TryValidar(out decimal valorEstimado)
     {
@@ -237,24 +204,5 @@ public class FormularioViewModel : BaseViewModel, IQueryAttributable
 
         MensajeError = null;
         return true;
-    }
-
-    private void LimpiarFormulario()
-    {
-        Titulo = string.Empty;
-        Plataforma = null;
-        Genero = null;
-        Estado = null;
-        ValorTexto = string.Empty;
-        ImagenUrl = string.Empty;
-        EsFavorito = false;
-        Completado = false;
-        MensajeError = null;
-    }
-
-    private void ActualizarTextosDeModo()
-    {
-        TituloPantalla = EsEdicion ? "Editar juego" : "Nuevo juego";
-        OnPropertyChanged(nameof(TextoBotonGuardar));
     }
 }
