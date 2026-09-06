@@ -2,24 +2,21 @@
 
 namespace GameVault.Views;
 
-public partial class DetallePage : ContentPage, IQueryAttributable
+public partial class DetallePage : ContentPage
 {
     private readonly DetalleViewModel _viewModel;
 
-    public DetallePage()
+    public DetallePage(DetalleViewModel viewModel)
     {
         InitializeComponent();
 
-        _viewModel = new DetalleViewModel();
-        BindingContext = _viewModel;
+        _viewModel = viewModel;
+        BindingContext = viewModel;
     }
 
-    public void ApplyQueryAttributes(IDictionary<string, object> query) =>
-        _viewModel.ApplyQueryAttributes(query);
-
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.OnAppearingAsync();
+        _viewModel.CargarCommand.Execute(null);
     }
 }
