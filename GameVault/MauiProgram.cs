@@ -37,10 +37,15 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<IVideojuegoRepository, VideojuegoRepository>();
 
+        builder.Services.AddSingleton<WishlistViewModel>();
+
         builder.Services.AddTransient<ListaViewModel>();
         builder.Services.AddTransient<ListaPage>();
         builder.Services.AddTransient<DetalleViewModel>();
         builder.Services.AddTransient<DetallePage>();
+        builder.Services.AddTransient<WishlistPage>();
+        builder.Services.AddTransient<FormularioViewModel>();
+        builder.Services.AddTransient<FormularioPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

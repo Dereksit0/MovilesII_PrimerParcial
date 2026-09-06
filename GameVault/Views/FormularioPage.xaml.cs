@@ -2,24 +2,21 @@
 
 namespace GameVault.Views;
 
-public partial class FormularioPage : ContentPage, IQueryAttributable
+public partial class FormularioPage : ContentPage
 {
     private readonly FormularioViewModel _viewModel;
 
-    public FormularioPage()
+    public FormularioPage(FormularioViewModel viewModel)
     {
         InitializeComponent();
 
-        _viewModel = new FormularioViewModel();
-        BindingContext = _viewModel;
+        _viewModel = viewModel;
+        BindingContext = viewModel;
     }
 
-    public void ApplyQueryAttributes(IDictionary<string, object> query) =>
-        _viewModel.ApplyQueryAttributes(query);
-
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.OnAppearingAsync();
+        _viewModel.PrepararCommand.Execute(null);
     }
 }
