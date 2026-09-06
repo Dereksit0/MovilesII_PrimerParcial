@@ -1,12 +1,15 @@
-﻿using GameVault.Models;
+﻿using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Text.Json;
+using GameVault.Models;
 
 namespace GameVault.Data;
 
 public class VideojuegoRepository : IVideojuegoRepository
 {
-    private static readonly List<Videojuego> Juegos = VideojuegoSeedData.Crear();
-    private static readonly object Candado = new();
-    private static int _siguienteId = Juegos.Max(j => j.Id) + 1;
+    private const string RutaOfertas = "api/1.0/deals?storeID=1&pageSize=24&sortBy=Metacritic&steamRating=85";
+    private const string PortadaSteam = "https://cdn.cloudflare.steamstatic.com/steam/apps/{0}/library_600x900.jpg";
+    private const decimal TipoDeCambio = 18.50m;
 
     private static readonly string[] Plataformas =
     [
@@ -16,8 +19,8 @@ public class VideojuegoRepository : IVideojuegoRepository
 
     private static readonly string[] Generos =
     [
-        "Acción", "Aventura", "RPG", "Shooter", "Plataformas",
-        "Deportes", "Estrategia", "Terror"
+        "Sin clasificar", "Acción", "Aventura", "RPG", "Shooter",
+        "Plataformas", "Deportes", "Estrategia", "Terror"
     ];
 
     private static readonly string[] Estados =
@@ -26,91 +29,158 @@ public class VideojuegoRepository : IVideojuegoRepository
         "Solo cartucho/disco", "Vendido"
     ];
 
-    public Task<IReadOnlyList<Videojuego>> GetVideojuegosAsync()
+    private static readonly JsonSerializerOptions OpcionesJson = new()
     {
-        lock (Candado)
-        {
-            IReadOnlyList<Videojuego> resultado = Juegos
-                .OrderBy(j => j.Titulo, StringComparer.CurrentCultureIgnoreCase)
-                .ToList();
+        PropertyNameCaseInsensitive = true
+    };
 
-            return Task.FromResult(resultado);
+    private readonly HttpClient _http;
+    private int _siguienteId = 1;
+
+    public VideojuegoRepository(HttpClient http)
+    {
+        _http = http;
+    }
+
+    public ObservableCollection<Videojuego> Videojuegos { get; } = [];
+
+    public bool EstaInicializado { get; private set; }
+
+    public async Task<ResultadoCarga> InicializarAsync(bool forzarRecarga = false, CancellationToken cancelacion = default)
+    {
+        if (EstaInicializado && !forzarRecarga)
+        {
+            return ResultadoCarga.Ok();
+        }
+
+        try
+        {
+            using var respuesta = await _http.GetAsync(RutaOfertas, cancelacion);
+            respuesta.EnsureSuccessStatusCode();
+
+            await using var flujo = await respuesta.Content.ReadAsStreamAsync(cancelacion);
+            var ofertas = await JsonSerializer.DeserializeAsync<List<OfertaJuegoDto>>(flujo, OpcionesJson, cancelacion);
+
+            Videojuegos.Clear();
+            _siguienteId = 1;
+
+            foreach (var oferta in ofertas ?? [])
+            {
+                var juego = Mapear(oferta);
+                if (juego is not null)
+                {
+                    Videojuegos.Add(juego);
+                }
+            }
+
+            EstaInicializado = true;
+            return ResultadoCarga.Ok();
+        }
+        catch (TaskCanceledException)
+        {
+            return ResultadoCarga.Fallo(
+                "La solicitud tardó demasiado y se canceló. Revisa tu conexión e inténtalo de nuevo.");
+        }
+        catch (HttpRequestException ex)
+        {
+            return ResultadoCarga.Fallo(
+                $"No se pudo contactar el servicio de juegos. {ex.Message}");
+        }
+        catch (JsonException)
+        {
+            return ResultadoCarga.Fallo(
+                "El servicio respondió con un formato que la app no pudo interpretar.");
         }
     }
 
-    public Task<IReadOnlyList<Videojuego>> GetFavoritosAsync()
-    {
-        lock (Candado)
-        {
-            IReadOnlyList<Videojuego> resultado = Juegos
-                .Where(j => j.EsFavorito)
-                .OrderByDescending(j => j.ValorEstimado)
-                .ToList();
+    public IReadOnlyList<Videojuego> ObtenerTodos() => Videojuegos;
 
-            return Task.FromResult(resultado);
-        }
-    }
+    public Videojuego? ObtenerPorId(int id) => Videojuegos.FirstOrDefault(j => j.Id == id);
 
-    public Task<Videojuego?> GetByIdAsync(int id)
-    {
-        lock (Candado)
-        {
-            return Task.FromResult(Juegos.FirstOrDefault(j => j.Id == id));
-        }
-    }
-
-    public Task<Videojuego> GuardarAsync(Videojuego juego)
+    public Videojuego Agregar(Videojuego juego)
     {
         ArgumentNullException.ThrowIfNull(juego);
 
-        lock (Candado)
-        {
-            if (juego.Id == 0)
-            {
-                juego.Id = _siguienteId++;
-                Juegos.Add(juego);
-                return Task.FromResult(juego);
-            }
-
-            var existente = Juegos.FirstOrDefault(j => j.Id == juego.Id);
-            if (existente is null)
-            {
-                Juegos.Add(juego);
-                return Task.FromResult(juego);
-            }
-
-            existente.Titulo = juego.Titulo;
-            existente.Plataforma = juego.Plataforma;
-            existente.Genero = juego.Genero;
-            existente.Estado = juego.Estado;
-            existente.ValorEstimado = juego.ValorEstimado;
-            existente.ImagenUrl = juego.ImagenUrl;
-            existente.ImagenLocalPath = juego.ImagenLocalPath;
-            existente.EsFavorito = juego.EsFavorito;
-            existente.Completado = juego.Completado;
-
-            return Task.FromResult(existente);
-        }
+        juego.Id = _siguienteId++;
+        Videojuegos.Add(juego);
+        return juego;
     }
 
-    public Task<bool> ToggleFavoritoAsync(int id)
+    public bool Actualizar(Videojuego juego)
     {
-        lock (Candado)
-        {
-            var juego = Juegos.FirstOrDefault(j => j.Id == id);
-            if (juego is null)
-            {
-                return Task.FromResult(false);
-            }
+        ArgumentNullException.ThrowIfNull(juego);
 
-            juego.EsFavorito = !juego.EsFavorito;
-            return Task.FromResult(juego.EsFavorito);
+        var indice = IndiceDe(juego.Id);
+        if (indice < 0)
+        {
+            return false;
         }
+
+        Videojuegos[indice] = juego;
+        return true;
     }
 
-    public IReadOnlyList<string> GetPlataformas() => Plataformas;
+    public bool Eliminar(int id)
+    {
+        var indice = IndiceDe(id);
+        if (indice < 0)
+        {
+            return false;
+        }
 
-    public IReadOnlyList<string> GetGeneros() => Generos;
+        Videojuegos.RemoveAt(indice);
+        return true;
+    }
 
-    public IReadOnlyList<string> GetEstados() => Estados;
+    public IReadOnlyList<string> ObtenerPlataformas() => Plataformas;
+
+    public IReadOnlyList<string> ObtenerGeneros() => Generos;
+
+    public IReadOnlyList<string> ObtenerEstados() => Estados;
+
+    private int IndiceDe(int id)
+    {
+        for (var i = 0; i < Videojuegos.Count; i++)
+        {
+            if (Videojuegos[i].Id == id)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private Videojuego? Mapear(OfertaJuegoDto oferta)
+    {
+        if (string.IsNullOrWhiteSpace(oferta.Title))
+        {
+            return null;
+        }
+
+        var enOferta = oferta.IsOnSale == "1";
+
+        return new Videojuego
+        {
+            Id = _siguienteId++,
+            Titulo = oferta.Title.Trim(),
+            Plataforma = "PC",
+            Genero = "Sin clasificar",
+            Estado = enOferta ? "Deseado" : "En colección",
+            ValorEstimado = Math.Round(ParsearPrecio(oferta.NormalPrice) * TipoDeCambio, 2),
+            ImagenUrl = ConstruirPortada(oferta.SteamAppId),
+            EsFavorito = enOferta,
+            Completado = false
+        };
+    }
+
+    private static decimal ParsearPrecio(string? valor) =>
+        decimal.TryParse(valor, NumberStyles.Number, CultureInfo.InvariantCulture, out var precio)
+            ? precio
+            : 0m;
+
+    private static string ConstruirPortada(string? steamAppId) =>
+        string.IsNullOrWhiteSpace(steamAppId) || !steamAppId.All(char.IsDigit)
+            ? string.Empty
+            : string.Format(CultureInfo.InvariantCulture, PortadaSteam, steamAppId);
 }
