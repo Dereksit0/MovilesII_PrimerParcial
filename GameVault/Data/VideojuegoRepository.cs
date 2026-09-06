@@ -11,6 +11,7 @@ public class VideojuegoRepository : IVideojuegoRepository
     private const int PaginasACargar = 4;
     private const string PortadaSteam = "https://cdn.cloudflare.steamstatic.com/steam/apps/{0}/library_600x900.jpg";
     private const int VerificacionesEnParalelo = 12;
+    private const int UmbralJuegoTerminado = 92;
     private const decimal TipoDeCambio = 18.50m;
 
     private static readonly string[] Plataformas =
@@ -224,6 +225,7 @@ public class VideojuegoRepository : IVideojuegoRepository
         }
 
         var enOferta = oferta.IsOnSale == "1";
+        var metacritic = ParsearEntero(oferta.MetacriticScore);
 
         return new Videojuego
         {
@@ -233,11 +235,11 @@ public class VideojuegoRepository : IVideojuegoRepository
             Estado = enOferta ? "Deseado" : "En colección",
             ValorEstimado = Math.Round(ParsearPrecio(oferta.NormalPrice) * TipoDeCambio, 2),
             Valoracion = string.IsNullOrWhiteSpace(oferta.SteamRatingText) ? null : oferta.SteamRatingText,
-            Metacritic = ParsearEntero(oferta.MetacriticScore),
+            Metacritic = metacritic,
             ImagenUrl = ConstruirPortada(oferta.SteamAppId),
             Miniatura = LimpiarMiniatura(oferta.Thumb),
             EsFavorito = enOferta,
-            Completado = false
+            Completado = metacritic >= UmbralJuegoTerminado
         };
     }
 
