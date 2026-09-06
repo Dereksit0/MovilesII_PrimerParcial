@@ -1,82 +1,80 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Collections.Specialized;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GameVault.Data;
 using GameVault.Models;
 
 namespace GameVault.ViewModels;
 
-public class ListaViewModel : BaseViewModel
+public partial class ListaViewModel : BaseViewModel
 {
     private readonly IVideojuegoRepository _repositorio;
 
-    private int _totalJuegos;
-    private int _totalCompletados;
-    private string _valorTotal = FormatoMoneda.Formatear(0m);
-
-    public ListaViewModel(IVideojuegoRepository? repositorio = null)
+    public ListaViewModel(IVideojuegoRepository repositorio)
     {
-        _repositorio = repositorio ?? new VideojuegoRepository();
+        _repositorio = repositorio;
         TituloPantalla = "Mi colección";
-
-        VerDetalleCommand = new Command<Videojuego>(async juego => await VerDetalleAsync(juego));
-        AgregarCommand = new Command(async () => await AgregarAsync());
-        RefrescarCommand = new Command(async () => await CargarAsync());
+        Juegos = repositorio.Videojuegos;
+        Juegos.CollectionChanged += AlCambiarLaColeccion;
+        ValorTotal = FormatoMoneda.Formatear(0m);
+        ActualizarResumen();
     }
 
-    public ObservableCollection<Videojuego> Juegos { get; } = [];
+    public ObservableCollection<Videojuego> Juegos { get; }
 
-    public ICommand VerDetalleCommand { get; }
-    public ICommand AgregarCommand { get; }
-    public ICommand RefrescarCommand { get; }
+    [ObservableProperty]
+    public partial int TotalJuegos { get; set; }
 
-    public int TotalJuegos
+    [ObservableProperty]
+    public partial int TotalCompletados { get; set; }
+
+    [ObservableProperty]
+    public partial string ValorTotal { get; set; }
+
+    [RelayCommand]
+    private Task CargarAsync() => ObtenerDatosAsync(forzarRecarga: false);
+
+    [RelayCommand]
+    private Task RecargarAsync() => ObtenerDatosAsync(forzarRecarga: true);
+
+    [RelayCommand]
+    private static Task VerDetalleAsync(Videojuego? juego) =>
+        juego is null
+            ? Task.CompletedTask
+            : Shell.Current.GoToAsync(AppRoutes.DetalleDe(juego.Id));
+
+    [RelayCommand]
+    private static Task AgregarAsync() => Shell.Current.GoToAsync(AppRoutes.Formulario);
+
+    private async Task ObtenerDatosAsync(bool forzarRecarga)
     {
-        get => _totalJuegos;
-        private set => SetProperty(ref _totalJuegos, value);
-    }
-
-    public int TotalCompletados
-    {
-        get => _totalCompletados;
-        private set => SetProperty(ref _totalCompletados, value);
-    }
-
-    public string ValorTotal
-    {
-        get => _valorTotal;
-        private set => SetProperty(ref _valorTotal, value);
-    }
-
-    public bool HayJuegos => Juegos.Count > 0;
-
-    public override Task OnAppearingAsync() => CargarAsync();
-
-    private Task CargarAsync() => EjecutarAsync(async () =>
-    {
-        var juegos = await _repositorio.GetVideojuegosAsync();
-
-        Juegos.Clear();
-        foreach (var juego in juegos)
-        {
-            Juegos.Add(juego);
-        }
-
-        TotalJuegos = juegos.Count;
-        TotalCompletados = juegos.Count(j => j.Completado);
-        ValorTotal = FormatoMoneda.Formatear(juegos.Sum(j => j.ValorEstimado));
-        OnPropertyChanged(nameof(HayJuegos));
-    },
-    "No se pudo cargar la colección");
-
-    private static async Task VerDetalleAsync(Videojuego? juego)
-    {
-        if (juego is null)
+        if (IsBusy)
         {
             return;
         }
 
-        await Shell.Current.GoToAsync(AppRoutes.DetalleDe(juego.Id));
+        IsBusy = true;
+        MensajeError = null;
+
+        var resultado = await _repositorio.InicializarAsync(forzarRecarga);
+
+        if (!resultado.Exito)
+        {
+            MensajeError = resultado.MensajeError;
+        }
+
+        ActualizarResumen();
+        IsBusy = false;
     }
 
-    private static Task AgregarAsync() => Shell.Current.GoToAsync(AppRoutes.Formulario);
+    private void AlCambiarLaColeccion(object? remitente, NotifyCollectionChangedEventArgs argumentos) =>
+        ActualizarResumen();
+
+    private void ActualizarResumen()
+    {
+        TotalJuegos = Juegos.Count;
+        TotalCompletados = Juegos.Count(juego => juego.Completado);
+        ValorTotal = FormatoMoneda.Formatear(Juegos.Sum(juego => juego.ValorEstimado));
+    }
 }
