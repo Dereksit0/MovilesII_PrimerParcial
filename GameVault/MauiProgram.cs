@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using GameVault.Data;
+using GameVault.ViewModels;
+using GameVault.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -34,6 +36,11 @@ public static class MauiProgram
         });
 
         builder.Services.AddSingleton<IVideojuegoRepository, VideojuegoRepository>();
+
+        builder.Services.AddTransient<ListaViewModel>();
+        builder.Services.AddTransient<ListaPage>();
+        builder.Services.AddTransient<DetalleViewModel>();
+        builder.Services.AddTransient<DetallePage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
