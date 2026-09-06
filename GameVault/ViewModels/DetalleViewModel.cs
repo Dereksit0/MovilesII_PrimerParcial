@@ -1,37 +1,33 @@
-﻿using System.Windows.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GameVault.Data;
 using GameVault.Models;
 
 namespace GameVault.ViewModels;
 
-public class DetalleViewModel : BaseViewModel, IQueryAttributable
+[QueryProperty(nameof(VideojuegoId), AppRoutes.ParametroId)]
+public partial class DetalleViewModel : BaseViewModel
 {
     private readonly IVideojuegoRepository _repositorio;
 
-    private int _juegoId;
-    private Videojuego? _juego;
-
-    public DetalleViewModel(IVideojuegoRepository? repositorio = null)
+    public DetalleViewModel(IVideojuegoRepository repositorio)
     {
-        _repositorio = repositorio ?? new VideojuegoRepository();
+        _repositorio = repositorio;
         TituloPantalla = "Detalle";
-
-        EditarCommand = new Command(async () => await EditarAsync(), () => HayJuego);
-        ToggleFavoritoCommand = new Command(async () => await AlternarFavoritoAsync(), () => HayJuego);
-        VolverCommand = new Command(async () => await VolverAsync());
+        VideojuegoId = string.Empty;
     }
 
-    public Videojuego? Juego
-    {
-        get => _juego;
-        private set
-        {
-            if (SetProperty(ref _juego, value))
-            {
-                RefrescarDerivados();
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial string VideojuegoId { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HayJuego))]
+    [NotifyPropertyChangedFor(nameof(NoEncontrado))]
+    [NotifyPropertyChangedFor(nameof(TextoFavorito))]
+    [NotifyCanExecuteChangedFor(nameof(EditarCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AlternarFavoritoCommand))]
+    [NotifyCanExecuteChangedFor(nameof(EliminarCommand))]
+    public partial Videojuego? Juego { get; set; }
 
     public bool HayJuego => Juego is not null;
 
@@ -40,56 +36,54 @@ public class DetalleViewModel : BaseViewModel, IQueryAttributable
     public string TextoFavorito =>
         Juego?.EsFavorito == true ? "Quitar de la wishlist" : "Agregar a la wishlist";
 
-    public ICommand EditarCommand { get; }
-    public ICommand ToggleFavoritoCommand { get; }
-    public ICommand VolverCommand { get; }
-
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    [RelayCommand]
+    private void Cargar()
     {
-        if (query.TryGetValue(AppRoutes.ParametroId, out var valor) &&
-            int.TryParse(Convert.ToString(valor), out var id))
-        {
-            _juegoId = id;
-        }
-    }
+        MensajeError = null;
 
-    public override Task OnAppearingAsync() => CargarAsync();
-
-    private Task CargarAsync() => EjecutarAsync(async () =>
-    {
-        Juego = await _repositorio.GetByIdAsync(_juegoId);
+        Juego = int.TryParse(VideojuegoId, out var id)
+            ? _repositorio.ObtenerPorId(id)
+            : null;
 
         if (Juego is null)
         {
             MensajeError = "No se encontró el juego solicitado.";
         }
-    },
-    "No se pudo cargar el juego");
+    }
 
-    private Task EditarAsync() =>
-        Juego is null ? Task.CompletedTask : Shell.Current.GoToAsync(AppRoutes.FormularioDe(Juego.Id));
+    [RelayCommand(CanExecute = nameof(HayJuego))]
+    private Task EditarAsync() => Shell.Current.GoToAsync(AppRoutes.FormularioDe(Juego!.Id));
 
-    private async Task AlternarFavoritoAsync()
+    [RelayCommand(CanExecute = nameof(HayJuego))]
+    private void AlternarFavorito()
     {
-        if (Juego is null)
+        var actualizado = Juego!.Clonar();
+        actualizado.EsFavorito = !actualizado.EsFavorito;
+
+        _repositorio.Actualizar(actualizado);
+        Juego = actualizado;
+    }
+
+    [RelayCommand(CanExecute = nameof(HayJuego))]
+    private async Task EliminarAsync()
+    {
+        var confirmado = await Shell.Current.DisplayAlertAsync(
+            "Eliminar juego",
+            $"¿Seguro que quieres eliminar \"{Juego!.Titulo}\" de tu colección? Esta acción no se puede deshacer.",
+            "Eliminar",
+            "Cancelar");
+
+        if (!confirmado)
         {
             return;
         }
 
-        await _repositorio.ToggleFavoritoAsync(Juego.Id);
-
-        RefrescarDerivados();
+        _repositorio.Eliminar(Juego.Id);
+        await Shell.Current.GoToAsync("..");
     }
 
+    [RelayCommand]
     private static Task VolverAsync() => Shell.Current.GoToAsync("..");
 
-    private void RefrescarDerivados()
-    {
-        OnPropertyChanged(nameof(Juego));
-        OnPropertyChanged(nameof(HayJuego));
-        OnPropertyChanged(nameof(NoEncontrado));
-        OnPropertyChanged(nameof(TextoFavorito));
-        ((Command)EditarCommand).ChangeCanExecute();
-        ((Command)ToggleFavoritoCommand).ChangeCanExecute();
-    }
+    partial void OnVideojuegoIdChanged(string value) => CargarCommand.Execute(null);
 }
