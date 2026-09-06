@@ -21,7 +21,10 @@
                 <Label Style="{StaticResource PageTitleLabel}" Text="{Binding TituloPantalla}" />
             </VerticalStackLayout>
 
-            <Border Padding="16,14" Style="{StaticResource PanelBorder}">
+            <Border
+                Padding="16,14"
+                IsVisible="{Binding MostrarContenido}"
+                Style="{StaticResource PanelBorder}">
                 <Grid ColumnDefinitions="*,1,*" ColumnSpacing="12">
                     <VerticalStackLayout Spacing="3">
                         <Label Style="{StaticResource StatValueLabel}" Text="{Binding TotalDeseados}" />
@@ -35,17 +38,46 @@
                 </Grid>
             </Border>
 
+        </VerticalStackLayout>
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            IsVisible="{Binding IsBusy}"
+            Spacing="16"
+            VerticalOptions="Center">
+            <ActivityIndicator HeightRequest="46" IsRunning="{Binding IsBusy}" />
             <Label
-                IsVisible="{Binding TieneError}"
+                HorizontalTextAlignment="Center"
+                Style="{StaticResource MutedLabel}"
+                Text="Consultando el servicio de juegos..." />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            Padding="34,0"
+            IsVisible="{Binding TieneError}"
+            Spacing="14"
+            VerticalOptions="Center">
+            <Label
+                HorizontalTextAlignment="Center"
+                Style="{StaticResource CardTitleLabel}"
+                Text="No se pudo cargar la wishlist" />
+            <Label
+                HorizontalTextAlignment="Center"
                 Style="{StaticResource ErrorLabel}"
                 Text="{Binding MensajeError}" />
-
+            <Button
+                Command="{Binding RecargarCommand}"
+                HorizontalOptions="Center"
+                Style="{StaticResource PrimaryButton}"
+                Text="Reintentar" />
         </VerticalStackLayout>
 
         <RefreshView
             Grid.Row="1"
-            Command="{Binding RefrescarCommand}"
-            IsRefreshing="{Binding IsBusy}">
+            Command="{Binding RecargarCommand}"
+            IsRefreshing="{Binding IsBusy}"
+            IsVisible="{Binding MostrarContenido}">
 
             <CollectionView ItemsSource="{Binding Deseados}" SelectionMode="None">
 
@@ -138,6 +170,7 @@
             Margin="0,0,22,26"
             Command="{Binding AgregarCommand}"
             HorizontalOptions="End"
+            IsVisible="{Binding MostrarContenido}"
             Style="{StaticResource FabButton}"
             Text="+"
             VerticalOptions="End" />
