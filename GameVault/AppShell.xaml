@@ -21,6 +21,12 @@
             Route="wishlist"
             ContentTemplate="{DataTemplate views:WishlistPage}" />
 
+        <ShellContent
+            Title="Terminados"
+            Icon="icon_terminados.png"
+            Route="terminados"
+            ContentTemplate="{DataTemplate views:TerminadosPage}" />
+
     </TabBar>
 
 </Shell>

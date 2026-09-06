@@ -46,6 +46,8 @@ public static class MauiProgram
         builder.Services.AddTransient<WishlistPage>();
         builder.Services.AddTransient<FormularioViewModel>();
         builder.Services.AddTransient<FormularioPage>();
+        builder.Services.AddTransient<TerminadosViewModel>();
+        builder.Services.AddTransient<TerminadosPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
