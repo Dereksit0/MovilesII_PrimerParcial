@@ -1,52 +1,79 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Collections.Specialized;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GameVault.Data;
 using GameVault.Models;
 
 namespace GameVault.ViewModels;
 
-public class WishlistViewModel : BaseViewModel
+public partial class WishlistViewModel : BaseViewModel
 {
     private readonly IVideojuegoRepository _repositorio;
 
-    private int _totalDeseados;
-    private string _inversionEstimada = FormatoMoneda.Formatear(0m);
-
-    public WishlistViewModel(IVideojuegoRepository? repositorio = null)
+    public WishlistViewModel(IVideojuegoRepository repositorio)
     {
-        _repositorio = repositorio ?? new VideojuegoRepository();
+        _repositorio = repositorio;
         TituloPantalla = "Wishlist";
+        InversionEstimada = FormatoMoneda.Formatear(0m);
 
-        VerDetalleCommand = new Command<Videojuego>(async juego => await VerDetalleAsync(juego));
-        RefrescarCommand = new Command(async () => await CargarAsync());
-        AgregarCommand = new Command(async () => await AgregarAsync());
+        _repositorio.Videojuegos.CollectionChanged += AlCambiarLaColeccion;
+        Refrescar();
     }
 
     public ObservableCollection<Videojuego> Deseados { get; } = [];
 
-    public ICommand VerDetalleCommand { get; }
-    public ICommand RefrescarCommand { get; }
-    public ICommand AgregarCommand { get; }
+    [ObservableProperty]
+    public partial int TotalDeseados { get; set; }
 
-    public int TotalDeseados
+    [ObservableProperty]
+    public partial string InversionEstimada { get; set; }
+
+    [RelayCommand]
+    private Task CargarAsync() => ObtenerDatosAsync(forzarRecarga: false);
+
+    [RelayCommand]
+    private Task RecargarAsync() => ObtenerDatosAsync(forzarRecarga: true);
+
+    [RelayCommand]
+    private static Task VerDetalleAsync(Videojuego? juego) =>
+        juego is null
+            ? Task.CompletedTask
+            : Shell.Current.GoToAsync(AppRoutes.DetalleDe(juego.Id));
+
+    [RelayCommand]
+    private static Task AgregarAsync() => Shell.Current.GoToAsync(AppRoutes.Formulario);
+
+    private async Task ObtenerDatosAsync(bool forzarRecarga)
     {
-        get => _totalDeseados;
-        private set => SetProperty(ref _totalDeseados, value);
+        if (IsBusy)
+        {
+            return;
+        }
+
+        IsBusy = true;
+        MensajeError = null;
+
+        var resultado = await _repositorio.InicializarAsync(forzarRecarga);
+
+        if (!resultado.Exito)
+        {
+            MensajeError = resultado.MensajeError;
+        }
+
+        Refrescar();
+        IsBusy = false;
     }
 
-    public string InversionEstimada
+    private void AlCambiarLaColeccion(object? remitente, NotifyCollectionChangedEventArgs argumentos) =>
+        Refrescar();
+
+    private void Refrescar()
     {
-        get => _inversionEstimada;
-        private set => SetProperty(ref _inversionEstimada, value);
-    }
-
-    public bool HayDeseados => Deseados.Count > 0;
-
-    public override Task OnAppearingAsync() => CargarAsync();
-
-    private Task CargarAsync() => EjecutarAsync(async () =>
-    {
-        var deseados = await _repositorio.GetFavoritosAsync();
+        var deseados = _repositorio.Videojuegos
+            .Where(juego => juego.EsFavorito)
+            .OrderByDescending(juego => juego.ValorEstimado)
+            .ToList();
 
         Deseados.Clear();
         foreach (var juego in deseados)
@@ -55,20 +82,6 @@ public class WishlistViewModel : BaseViewModel
         }
 
         TotalDeseados = deseados.Count;
-        InversionEstimada = FormatoMoneda.Formatear(deseados.Sum(j => j.ValorEstimado));
-        OnPropertyChanged(nameof(HayDeseados));
-    },
-    "No se pudo cargar la wishlist");
-
-    private static async Task VerDetalleAsync(Videojuego? juego)
-    {
-        if (juego is null)
-        {
-            return;
-        }
-
-        await Shell.Current.GoToAsync(AppRoutes.DetalleDe(juego.Id));
+        InversionEstimada = FormatoMoneda.Formatear(deseados.Sum(juego => juego.ValorEstimado));
     }
-
-    private static Task AgregarAsync() => Shell.Current.GoToAsync(AppRoutes.Formulario);
 }
