@@ -43,6 +43,19 @@
                 </Grid>
             </Border>
 
+            <Border
+                Padding="6,0"
+                IsVisible="{Binding MostrarContenido}"
+                Style="{StaticResource FieldBorder}">
+                <SearchBar
+                    Placeholder="Buscar juego por titulo..."
+                    Text="{Binding TextoBusqueda}" />
+            </Border>
+
+            <Label
+                IsVisible="{Binding HayBusqueda}"
+                Style="{StaticResource MutedLabel}"
+                Text="{Binding TextoResultados}" />
         </VerticalStackLayout>
 
         <VerticalStackLayout
@@ -98,11 +111,11 @@
                         <Label
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource CardTitleLabel}"
-                            Text="Todavia no hay juegos" />
+                            Text="Sin resultados" />
                         <Label
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource MutedLabel}"
-                            Text="Agrega el primero con el boton + de abajo." />
+                            Text="Prueba con otro titulo, o agrega un juego con el boton +." />
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
 
