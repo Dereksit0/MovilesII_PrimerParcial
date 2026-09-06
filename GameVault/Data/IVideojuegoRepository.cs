@@ -1,20 +1,29 @@
-﻿using GameVault.Models;
+﻿using System.Collections.ObjectModel;
+using GameVault.Models;
 
 namespace GameVault.Data;
 
 public interface IVideojuegoRepository
 {
-    Task<IReadOnlyList<Videojuego>> GetVideojuegosAsync();
+    ObservableCollection<Videojuego> Videojuegos { get; }
 
-    Task<IReadOnlyList<Videojuego>> GetFavoritosAsync();
+    bool EstaInicializado { get; }
 
-    Task<Videojuego?> GetByIdAsync(int id);
+    Task<ResultadoCarga> InicializarAsync(bool forzarRecarga = false, CancellationToken cancelacion = default);
 
-    Task<Videojuego> GuardarAsync(Videojuego juego);
+    IReadOnlyList<Videojuego> ObtenerTodos();
 
-    Task<bool> ToggleFavoritoAsync(int id);
+    Videojuego? ObtenerPorId(int id);
 
-    IReadOnlyList<string> GetPlataformas();
-    IReadOnlyList<string> GetGeneros();
-    IReadOnlyList<string> GetEstados();
+    Videojuego Agregar(Videojuego juego);
+
+    bool Actualizar(Videojuego juego);
+
+    bool Eliminar(int id);
+
+    IReadOnlyList<string> ObtenerPlataformas();
+
+    IReadOnlyList<string> ObtenerGeneros();
+
+    IReadOnlyList<string> ObtenerEstados();
 }
