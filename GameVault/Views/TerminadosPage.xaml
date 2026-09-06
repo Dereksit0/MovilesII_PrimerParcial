@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="GameVault.Views.TerminadosPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:models="clr-namespace:GameVault.Models"
+    xmlns:vm="clr-namespace:GameVault.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:DataType="vm:TerminadosViewModel"
+    Title="Terminados"
+    Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <VerticalStackLayout
+            Grid.Row="0"
+            Padding="20,22,20,14"
+            Spacing="14">
+
+            <VerticalStackLayout Spacing="2">
+                <Label Style="{StaticResource SectionTitleLabel}" Text="Tu progreso" />
+                <Label Style="{StaticResource PageTitleLabel}" Text="{Binding TituloPantalla}" />
+            </VerticalStackLayout>
+
+            <Border
+                Padding="16,14"
+                IsVisible="{Binding MostrarContenido}"
+                Style="{StaticResource PanelBorder}">
+                <Grid ColumnDefinitions="*,1,*,1,*" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Style="{StaticResource StatValueLabel}" Text="{Binding TotalTerminados}" />
+                        <Label Style="{StaticResource StatCaptionLabel}" Text="Terminados" />
+                    </VerticalStackLayout>
+                    <BoxView Grid.Column="1" WidthRequest="1" />
+                    <VerticalStackLayout Grid.Column="2" Spacing="3">
+                        <Label Style="{StaticResource StatValueLabel}" Text="{Binding PorcentajeTexto}" />
+                        <Label Style="{StaticResource StatCaptionLabel}" Text="De la coleccion" />
+                    </VerticalStackLayout>
+                    <BoxView Grid.Column="3" WidthRequest="1" />
+                    <VerticalStackLayout Grid.Column="4" Spacing="3">
+                        <Label Style="{StaticResource PriceLabel}" Text="{Binding ValorTerminado}" />
+                        <Label Style="{StaticResource StatCaptionLabel}" Text="Valor jugado" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border
+                Padding="6,0"
+                IsVisible="{Binding MostrarContenido}"
+                Style="{StaticResource FieldBorder}">
+                <SearchBar
+                    Placeholder="Buscar entre los terminados..."
+                    Text="{Binding TextoBusqueda}" />
+            </Border>
+
+            <Label
+                IsVisible="{Binding HayBusqueda}"
+                Style="{StaticResource MutedLabel}"
+                Text="{Binding TextoResultados}" />
+
+        </VerticalStackLayout>
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            IsVisible="{Binding IsBusy}"
+            Spacing="16"
+            VerticalOptions="Center">
+            <ActivityIndicator HeightRequest="46" IsRunning="{Binding IsBusy}" />
+            <Label
+                HorizontalTextAlignment="Center"
+                Style="{StaticResource MutedLabel}"
+                Text="Consultando el servicio de juegos..." />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            Padding="34,0"
+            IsVisible="{Binding TieneError}"
+            Spacing="14"
+            VerticalOptions="Center">
+            <Label
+                HorizontalTextAlignment="Center"
+                Style="{StaticResource CardTitleLabel}"
+                Text="No se pudo cargar la coleccion" />
+            <Label
+                HorizontalTextAlignment="Center"
+                Style="{StaticResource ErrorLabel}"
+                Text="{Binding MensajeError}" />
+            <Button
+                Command="{Binding RecargarCommand}"
+                HorizontalOptions="Center"
+                Style="{StaticResource PrimaryButton}"
+                Text="Reintentar" />
+        </VerticalStackLayout>
+
+        <RefreshView
+            Grid.Row="1"
+            Command="{Binding RecargarCommand}"
+            IsRefreshing="{Binding IsBusy}"
+            IsVisible="{Binding MostrarContenido}">
+
+            <CollectionView ItemsSource="{Binding Terminados}" SelectionMode="None">
+
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="12" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout
+                        Padding="40"
+                        Spacing="8"
+                        VerticalOptions="Center">
+                        <Label
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource CardTitleLabel}"
+                            Text="Todavia no terminas ningun juego" />
+                        <Label
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource MutedLabel}"
+                            Text="Abre un juego, editalo y activa Ya lo termine para que aparezca aqui." />
+                        <Button
+                            Command="{Binding LimpiarBusquedaCommand}"
+                            HorizontalOptions="Center"
+                            IsVisible="{Binding HayBusqueda}"
+                            Style="{StaticResource SecondaryButton}"
+                            Text="Limpiar busqueda" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Videojuego">
+                        <Border Margin="20,0" Style="{StaticResource CardBorder}">
+
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TerminadosViewModel}}, Path=VerDetalleCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="94,*" ColumnSpacing="14">
+
+                                <Border
+                                    HeightRequest="126"
+                                    Style="{StaticResource CoverBorder}"
+                                    VerticalOptions="Start"
+                                    WidthRequest="94">
+                                    <Image
+                                        Aspect="AspectFill"
+                                        HeightRequest="126"
+                                        Source="{Binding ImagenMostrada}"
+                                        WidthRequest="94" />
+                                </Border>
+
+                                <VerticalStackLayout
+                                    Grid.Column="1"
+                                    Spacing="8"
+                                    VerticalOptions="Center">
+
+                                    <Label
+                                        LineBreakMode="TailTruncation"
+                                        MaxLines="2"
+                                        Style="{StaticResource CardTitleLabel}"
+                                        Text="{Binding Titulo}" />
+
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Border Style="{StaticResource ChipBorder}">
+                                            <Label Style="{StaticResource ChipLabel}" Text="{Binding Plataforma}" />
+                                        </Border>
+                                        <Border IsVisible="{Binding TieneMetacritic}" Style="{StaticResource ChipBorder}">
+                                            <Label Style="{StaticResource ChipLabel}" Text="{Binding MetacriticTexto}" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+
+                                    <Label Style="{StaticResource MutedLabel}" Text="{Binding Valoracion}" />
+
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label
+                                            Style="{StaticResource PriceLabel}"
+                                            Text="{Binding ValorFormateado}"
+                                            VerticalOptions="Center" />
+                                        <Border Grid.Column="1" Style="{StaticResource SuccessChipBorder}">
+                                            <Label Style="{StaticResource SuccessChipLabel}" Text="Completado" />
+                                        </Border>
+                                    </Grid>
+
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <Button
+            Grid.Row="1"
+            Margin="0,0,22,26"
+            Command="{Binding AgregarCommand}"
+            HorizontalOptions="End"
+            IsVisible="{Binding MostrarContenido}"
+            Style="{StaticResource FabButton}"
+            Text="+"
+            VerticalOptions="End" />
+
+    </Grid>
+
+</ContentPage>
