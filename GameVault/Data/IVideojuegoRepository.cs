@@ -23,7 +23,5 @@ public interface IVideojuegoRepository
 
     IReadOnlyList<string> ObtenerPlataformas();
 
-    IReadOnlyList<string> ObtenerGeneros();
-
     IReadOnlyList<string> ObtenerEstados();
 }
