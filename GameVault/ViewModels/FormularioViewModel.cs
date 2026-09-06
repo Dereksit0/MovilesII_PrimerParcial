@@ -19,7 +19,6 @@ public partial class FormularioViewModel : BaseViewModel
         _repositorio = repositorio;
 
         Plataformas = repositorio.ObtenerPlataformas();
-        Generos = repositorio.ObtenerGeneros();
         Estados = repositorio.ObtenerEstados();
 
         VideojuegoId = string.Empty;
@@ -31,8 +30,6 @@ public partial class FormularioViewModel : BaseViewModel
 
     public IReadOnlyList<string> Plataformas { get; }
 
-    public IReadOnlyList<string> Generos { get; }
-
     public IReadOnlyList<string> Estados { get; }
 
     [ObservableProperty]
@@ -43,9 +40,6 @@ public partial class FormularioViewModel : BaseViewModel
 
     [ObservableProperty]
     public partial string? Plataforma { get; set; }
-
-    [ObservableProperty]
-    public partial string? Genero { get; set; }
 
     [ObservableProperty]
     public partial string? Estado { get; set; }
@@ -103,7 +97,6 @@ public partial class FormularioViewModel : BaseViewModel
 
         Titulo = juego.Titulo;
         Plataforma = juego.Plataforma;
-        Genero = juego.Genero;
         Estado = juego.Estado;
         ValorTexto = juego.ValorEstimado.ToString("0.##", CultureInfo.InvariantCulture);
         ImagenUrl = juego.ImagenUrl;
@@ -124,7 +117,6 @@ public partial class FormularioViewModel : BaseViewModel
             Id = _idEnEdicion,
             Titulo = Titulo.Trim(),
             Plataforma = Plataforma!,
-            Genero = Genero!,
             Estado = Estado!,
             ValorEstimado = valorEstimado,
             ImagenUrl = ImagenUrl.Trim(),
@@ -157,7 +149,6 @@ public partial class FormularioViewModel : BaseViewModel
 
         Titulo = string.Empty;
         Plataforma = null;
-        Genero = null;
         Estado = null;
         ValorTexto = string.Empty;
         ImagenUrl = string.Empty;
@@ -178,12 +169,6 @@ public partial class FormularioViewModel : BaseViewModel
         if (string.IsNullOrWhiteSpace(Plataforma))
         {
             MensajeError = "Elige una plataforma.";
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(Genero))
-        {
-            MensajeError = "Elige un genero.";
             return false;
         }
 

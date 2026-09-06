@@ -63,25 +63,15 @@
                         </Border>
                     </VerticalStackLayout>
                     <VerticalStackLayout Grid.Column="1">
-                        <Label Style="{StaticResource FormLabel}" Text="GENERO" />
+                        <Label Style="{StaticResource FormLabel}" Text="ESTADO" />
                         <Border Style="{StaticResource FieldBorder}">
                             <Picker
-                                ItemsSource="{Binding Generos}"
-                                SelectedItem="{Binding Genero}"
+                                ItemsSource="{Binding Estados}"
+                                SelectedItem="{Binding Estado}"
                                 Title="Elegir" />
                         </Border>
                     </VerticalStackLayout>
                 </Grid>
-
-                <VerticalStackLayout>
-                    <Label Style="{StaticResource FormLabel}" Text="ESTADO EN LA COLECCION" />
-                    <Border Style="{StaticResource FieldBorder}">
-                        <Picker
-                            ItemsSource="{Binding Estados}"
-                            SelectedItem="{Binding Estado}"
-                            Title="Elegir" />
-                    </Border>
-                </VerticalStackLayout>
 
                 <VerticalStackLayout>
                     <Label Style="{StaticResource FormLabel}" Text="VALOR ESTIMADO (MXN)" />
