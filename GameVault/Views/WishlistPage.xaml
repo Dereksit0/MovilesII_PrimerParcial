@@ -140,8 +140,8 @@
                                         <Border Style="{StaticResource ChipBorder}">
                                             <Label Style="{StaticResource ChipLabel}" Text="{Binding Plataforma}" />
                                         </Border>
-                                        <Border Style="{StaticResource ChipBorder}">
-                                            <Label Style="{StaticResource ChipLabel}" Text="{Binding Genero}" />
+                                        <Border IsVisible="{Binding TieneMetacritic}" Style="{StaticResource ChipBorder}">
+                                            <Label Style="{StaticResource ChipLabel}" Text="{Binding MetacriticTexto}" />
                                         </Border>
                                     </HorizontalStackLayout>
 
