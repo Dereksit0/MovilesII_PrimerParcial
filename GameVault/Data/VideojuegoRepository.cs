@@ -129,7 +129,7 @@ public class VideojuegoRepository : IVideojuegoRepository
         ArgumentNullException.ThrowIfNull(juego);
 
         juego.Id = _siguienteId++;
-        Videojuegos.Add(juego);
+        Videojuegos.Insert(0, juego);
         return juego;
     }
 
