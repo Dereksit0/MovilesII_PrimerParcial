@@ -7,20 +7,16 @@ namespace GameVault.Data;
 
 public class VideojuegoRepository : IVideojuegoRepository
 {
-    private const string RutaOfertas = "api/1.0/deals?storeID=1&pageSize=24&sortBy=Metacritic&steamRating=85";
+    private const string PlantillaRuta = "api/1.0/deals?storeID=1&pageSize=60&pageNumber={0}&sortBy=Metacritic&steamRating=80";
+    private const int PaginasACargar = 4;
     private const string PortadaSteam = "https://cdn.cloudflare.steamstatic.com/steam/apps/{0}/library_600x900.jpg";
+    private const int VerificacionesEnParalelo = 12;
     private const decimal TipoDeCambio = 18.50m;
 
     private static readonly string[] Plataformas =
     [
         "PC", "PS5", "PS4", "PS2", "PS1", "Xbox Series X", "Xbox 360",
         "Nintendo Switch", "GameCube", "N64", "SNES"
-    ];
-
-    private static readonly string[] Generos =
-    [
-        "Sin clasificar", "Acción", "Aventura", "RPG", "Shooter",
-        "Plataformas", "Deportes", "Estrategia", "Terror"
     ];
 
     private static readonly string[] Estados =
@@ -55,22 +51,56 @@ public class VideojuegoRepository : IVideojuegoRepository
 
         try
         {
-            using var respuesta = await _http.GetAsync(RutaOfertas, cancelacion);
-            respuesta.EnsureSuccessStatusCode();
+            var ofertas = new List<OfertaJuegoDto>();
 
-            await using var flujo = await respuesta.Content.ReadAsStreamAsync(cancelacion);
-            var ofertas = await JsonSerializer.DeserializeAsync<List<OfertaJuegoDto>>(flujo, OpcionesJson, cancelacion);
+            for (var pagina = 0; pagina < PaginasACargar; pagina++)
+            {
+                var ruta = string.Format(CultureInfo.InvariantCulture, PlantillaRuta, pagina);
 
-            Videojuegos.Clear();
+                using var respuesta = await _http.GetAsync(ruta, cancelacion);
+                respuesta.EnsureSuccessStatusCode();
+
+                await using var flujo = await respuesta.Content.ReadAsStreamAsync(cancelacion);
+                var ofertasDeLaPagina = await JsonSerializer.DeserializeAsync<List<OfertaJuegoDto>>(
+                    flujo, OpcionesJson, cancelacion);
+
+                if (ofertasDeLaPagina is null || ofertasDeLaPagina.Count == 0)
+                {
+                    break;
+                }
+
+                ofertas.AddRange(ofertasDeLaPagina);
+            }
+
             _siguienteId = 1;
 
-            foreach (var oferta in ofertas ?? [])
+            var vistos = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var juegos = new List<Videojuego>();
+
+            foreach (var oferta in ofertas)
             {
+                var clave = string.IsNullOrWhiteSpace(oferta.SteamAppId)
+                    ? oferta.Title ?? string.Empty
+                    : oferta.SteamAppId;
+
+                if (!vistos.Add(clave))
+                {
+                    continue;
+                }
+
                 var juego = Mapear(oferta);
                 if (juego is not null)
                 {
-                    Videojuegos.Add(juego);
+                    juegos.Add(juego);
                 }
+            }
+
+            await AsegurarPortadasAsync(juegos, cancelacion);
+
+            Videojuegos.Clear();
+            foreach (var juego in juegos)
+            {
+                Videojuegos.Add(juego);
             }
 
             EstaInicializado = true;
@@ -102,7 +132,7 @@ public class VideojuegoRepository : IVideojuegoRepository
         ArgumentNullException.ThrowIfNull(juego);
 
         juego.Id = _siguienteId++;
-        Videojuegos.Add(juego);
+        Videojuegos.Insert(0, juego);
         return juego;
     }
 
@@ -134,9 +164,44 @@ public class VideojuegoRepository : IVideojuegoRepository
 
     public IReadOnlyList<string> ObtenerPlataformas() => Plataformas;
 
-    public IReadOnlyList<string> ObtenerGeneros() => Generos;
-
     public IReadOnlyList<string> ObtenerEstados() => Estados;
+
+    private async Task AsegurarPortadasAsync(IReadOnlyList<Videojuego> juegos, CancellationToken cancelacion)
+    {
+        using var limite = new SemaphoreSlim(VerificacionesEnParalelo);
+
+        var verificaciones = juegos.Select(async juego =>
+        {
+            if (string.IsNullOrWhiteSpace(juego.ImagenUrl))
+            {
+                juego.ImagenUrl = juego.Miniatura;
+                return;
+            }
+
+            await limite.WaitAsync(cancelacion);
+
+            try
+            {
+                using var peticion = new HttpRequestMessage(HttpMethod.Head, juego.ImagenUrl);
+                using var respuesta = await _http.SendAsync(peticion, cancelacion);
+
+                if (!respuesta.IsSuccessStatusCode)
+                {
+                    juego.ImagenUrl = juego.Miniatura;
+                }
+            }
+            catch (Exception)
+            {
+                juego.ImagenUrl = juego.Miniatura;
+            }
+            finally
+            {
+                limite.Release();
+            }
+        });
+
+        await Task.WhenAll(verificaciones);
+    }
 
     private int IndiceDe(int id)
     {
@@ -165,10 +230,12 @@ public class VideojuegoRepository : IVideojuegoRepository
             Id = _siguienteId++,
             Titulo = oferta.Title.Trim(),
             Plataforma = "PC",
-            Genero = "Sin clasificar",
             Estado = enOferta ? "Deseado" : "En colección",
             ValorEstimado = Math.Round(ParsearPrecio(oferta.NormalPrice) * TipoDeCambio, 2),
+            Valoracion = string.IsNullOrWhiteSpace(oferta.SteamRatingText) ? null : oferta.SteamRatingText,
+            Metacritic = ParsearEntero(oferta.MetacriticScore),
             ImagenUrl = ConstruirPortada(oferta.SteamAppId),
+            Miniatura = LimpiarMiniatura(oferta.Thumb),
             EsFavorito = enOferta,
             Completado = false
         };
@@ -179,8 +246,16 @@ public class VideojuegoRepository : IVideojuegoRepository
             ? precio
             : 0m;
 
+    private static int? ParsearEntero(string? valor) =>
+        int.TryParse(valor, NumberStyles.Integer, CultureInfo.InvariantCulture, out var numero) && numero > 0
+            ? numero
+            : null;
+
     private static string ConstruirPortada(string? steamAppId) =>
         string.IsNullOrWhiteSpace(steamAppId) || !steamAppId.All(char.IsDigit)
             ? string.Empty
             : string.Format(CultureInfo.InvariantCulture, PortadaSteam, steamAppId);
+
+    private static string LimpiarMiniatura(string? thumb) =>
+        string.IsNullOrWhiteSpace(thumb) ? string.Empty : thumb.Trim();
 }
