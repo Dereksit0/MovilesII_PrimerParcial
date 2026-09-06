@@ -38,6 +38,19 @@
                 </Grid>
             </Border>
 
+            <Border
+                Padding="6,0"
+                IsVisible="{Binding MostrarContenido}"
+                Style="{StaticResource FieldBorder}">
+                <SearchBar
+                    Placeholder="Buscar en la wishlist..."
+                    Text="{Binding TextoBusqueda}" />
+            </Border>
+
+            <Label
+                IsVisible="{Binding HayBusqueda}"
+                Style="{StaticResource MutedLabel}"
+                Text="{Binding TextoResultados}" />
         </VerticalStackLayout>
 
         <VerticalStackLayout
