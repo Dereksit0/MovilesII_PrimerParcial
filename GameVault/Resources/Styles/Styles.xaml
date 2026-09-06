@@ -327,6 +327,13 @@
         <Setter Property="Padding" Value="0" />
     </Style>
 
+    <Style x:Key="DangerButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource GvDangerSoft}" />
+        <Setter Property="TextColor" Value="{StaticResource GvDanger}" />
+        <Setter Property="BorderColor" Value="{StaticResource GvDanger}" />
+        <Setter Property="BorderWidth" Value="1" />
+    </Style>
+
     <Style x:Key="FormLabel" TargetType="Label">
         <Setter Property="FontFamily" Value="OpenSansSemibold" />
         <Setter Property="FontSize" Value="12" />

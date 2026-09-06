@@ -39,14 +39,7 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <VerticalStackLayout
-                Padding="20,18,20,30"
-                Spacing="16">
-
-                <Label
-                    IsVisible="{Binding TieneError}"
-                    Style="{StaticResource ErrorLabel}"
-                    Text="{Binding MensajeError}" />
+            <VerticalStackLayout Padding="20,18,20,30" Spacing="16">
 
                 <VerticalStackLayout IsVisible="{Binding HayJuego}" Spacing="16">
 
@@ -101,10 +94,15 @@
                             Text="Editar" />
                         <Button
                             Grid.Column="1"
-                            Command="{Binding ToggleFavoritoCommand}"
+                            Command="{Binding AlternarFavoritoCommand}"
                             Style="{StaticResource AccentButton}"
                             Text="{Binding TextoFavorito}" />
                     </Grid>
+
+                    <Button
+                        Command="{Binding EliminarCommand}"
+                        Style="{StaticResource DangerButton}"
+                        Text="Eliminar de la coleccion" />
 
                     <Button
                         Command="{Binding VolverCommand}"
@@ -124,7 +122,7 @@
                     <Label
                         HorizontalTextAlignment="Center"
                         Style="{StaticResource MutedLabel}"
-                        Text="Puede que se haya eliminado de la coleccion." />
+                        Text="{Binding MensajeError}" />
                 </VerticalStackLayout>
 
             </VerticalStackLayout>

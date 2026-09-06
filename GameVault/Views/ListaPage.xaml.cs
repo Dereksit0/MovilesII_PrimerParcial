@@ -6,17 +6,17 @@ public partial class ListaPage : ContentPage
 {
     private readonly ListaViewModel _viewModel;
 
-    public ListaPage()
+    public ListaPage(ListaViewModel viewModel)
     {
         InitializeComponent();
 
-        _viewModel = new ListaViewModel();
-        BindingContext = _viewModel;
+        _viewModel = viewModel;
+        BindingContext = viewModel;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.OnAppearingAsync();
+        _viewModel.CargarCommand.Execute(null);
     }
 }
