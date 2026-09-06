@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net.Http.Headers;
+using GameVault.Data;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace GameVault;
 
@@ -14,6 +17,23 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
+
+        builder.Services.AddSingleton(_ =>
+        {
+            var http = new HttpClient
+            {
+                BaseAddress = new Uri("https://www.cheapshark.com/"),
+                Timeout = TimeSpan.FromSeconds(20)
+            };
+
+            http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GameVault", "1.0"));
+            http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("(proyecto-escolar-maui)"));
+            http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            return http;
+        });
+
+        builder.Services.AddSingleton<IVideojuegoRepository, VideojuegoRepository>();
 
 #if DEBUG
         builder.Logging.AddDebug();
