@@ -26,8 +26,8 @@
                         <Border Style="{StaticResource AccentChipBorder}">
                             <Label Style="{StaticResource AccentChipLabel}" Text="{Binding Juego.Plataforma}" />
                         </Border>
-                        <Border Style="{StaticResource ChipBorder}">
-                            <Label Style="{StaticResource ChipLabel}" Text="{Binding Juego.Genero}" />
+                        <Border IsVisible="{Binding Juego.TieneMetacritic}" Style="{StaticResource ChipBorder}">
+                            <Label Style="{StaticResource ChipLabel}" Text="{Binding Juego.MetacriticTexto}" />
                         </Border>
                         <Border IsVisible="{Binding Juego.EsFavorito}" Style="{StaticResource SuccessChipBorder}">
                             <Label Style="{StaticResource SuccessChipLabel}" Text="En wishlist" />
@@ -69,12 +69,12 @@
                                     Style="{StaticResource MetaLabel}"
                                     Text="{Binding Juego.Plataforma}" />
 
-                                <Label Grid.Row="1" Style="{StaticResource MutedLabel}" Text="Genero" />
+                                <Label Grid.Row="1" Style="{StaticResource MutedLabel}" Text="Valoracion" />
                                 <Label
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     Style="{StaticResource MetaLabel}"
-                                    Text="{Binding Juego.Genero}" />
+                                    Text="{Binding Juego.Valoracion}" />
 
                                 <Label Grid.Row="2" Style="{StaticResource MutedLabel}" Text="Estado" />
                                 <Label
