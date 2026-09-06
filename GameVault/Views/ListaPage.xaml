@@ -116,6 +116,12 @@
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource MutedLabel}"
                             Text="Prueba con otro titulo, o agrega un juego con el boton +." />
+                        <Button
+                            Command="{Binding LimpiarBusquedaCommand}"
+                            HorizontalOptions="Center"
+                            IsVisible="{Binding HayBusqueda}"
+                            Style="{StaticResource SecondaryButton}"
+                            Text="Limpiar busqueda" />
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
 
