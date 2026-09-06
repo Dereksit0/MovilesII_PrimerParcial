@@ -7,7 +7,8 @@ namespace GameVault.Data;
 
 public class VideojuegoRepository : IVideojuegoRepository
 {
-    private const string RutaOfertas = "api/1.0/deals?storeID=1&pageSize=24&sortBy=Metacritic&steamRating=85";
+    private const string PlantillaRuta = "api/1.0/deals?storeID=1&pageSize=60&pageNumber={0}&sortBy=Metacritic&steamRating=80";
+    private const int PaginasACargar = 4;
     private const string PortadaSteam = "https://cdn.cloudflare.steamstatic.com/steam/apps/{0}/library_600x900.jpg";
     private const decimal TipoDeCambio = 18.50m;
 
@@ -55,17 +56,43 @@ public class VideojuegoRepository : IVideojuegoRepository
 
         try
         {
-            using var respuesta = await _http.GetAsync(RutaOfertas, cancelacion);
-            respuesta.EnsureSuccessStatusCode();
+            var ofertas = new List<OfertaJuegoDto>();
 
-            await using var flujo = await respuesta.Content.ReadAsStreamAsync(cancelacion);
-            var ofertas = await JsonSerializer.DeserializeAsync<List<OfertaJuegoDto>>(flujo, OpcionesJson, cancelacion);
+            for (var pagina = 0; pagina < PaginasACargar; pagina++)
+            {
+                var ruta = string.Format(CultureInfo.InvariantCulture, PlantillaRuta, pagina);
+
+                using var respuesta = await _http.GetAsync(ruta, cancelacion);
+                respuesta.EnsureSuccessStatusCode();
+
+                await using var flujo = await respuesta.Content.ReadAsStreamAsync(cancelacion);
+                var ofertasDeLaPagina = await JsonSerializer.DeserializeAsync<List<OfertaJuegoDto>>(
+                    flujo, OpcionesJson, cancelacion);
+
+                if (ofertasDeLaPagina is null || ofertasDeLaPagina.Count == 0)
+                {
+                    break;
+                }
+
+                ofertas.AddRange(ofertasDeLaPagina);
+            }
 
             Videojuegos.Clear();
             _siguienteId = 1;
 
-            foreach (var oferta in ofertas ?? [])
+            var vistos = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var oferta in ofertas)
             {
+                var clave = string.IsNullOrWhiteSpace(oferta.SteamAppId)
+                    ? oferta.Title ?? string.Empty
+                    : oferta.SteamAppId;
+
+                if (!vistos.Add(clave))
+                {
+                    continue;
+                }
+
                 var juego = Mapear(oferta);
                 if (juego is not null)
                 {
