@@ -1,0 +1,63 @@
+@page "/"
+@inject IVideojuegoRepository Repositorio
+@implements IDisposable
+
+<h1>Mi colección</h1>
+
+@if (cargando)
+{
+    <div class="aviso">Consultando GameVault.Api...</div>
+}
+else if (error is not null)
+{
+    <div class="aviso error">
+        <p>@error</p>
+        <button @onclick="RecargarAsync">Intentar de nuevo</button>
+    </div>
+}
+else
+{
+    <p>@Repositorio.Videojuegos.Count juegos en la base.</p>
+
+    <ul class="lista-simple">
+        @foreach (var juego in Repositorio.Videojuegos)
+        {
+            <li>
+                @juego.Titulo
+                <small>@juego.Plataforma · @juego.Estado · @juego.PromedioTexto (@juego.TotalResenasTexto)</small>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private bool cargando = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Repositorio.CambioLaColeccion += AlCambiarLaColeccion;
+        await CargarAsync(forzarRecarga: false);
+    }
+
+    private Task RecargarAsync() => CargarAsync(forzarRecarga: true);
+
+    private async Task CargarAsync(bool forzarRecarga)
+    {
+        cargando = true;
+        error = null;
+
+        var resultado = await Repositorio.InicializarAsync(forzarRecarga);
+
+        if (!resultado.Exito)
+        {
+            error = resultado.MensajeError;
+        }
+
+        cargando = false;
+    }
+
+    private void AlCambiarLaColeccion() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Repositorio.CambioLaColeccion -= AlCambiarLaColeccion;
+}

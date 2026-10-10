@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
 		<!-- Fase 1: solo Android + Windows (las plataformas que compilamos y probamos aqui).
@@ -20,13 +20,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
-		<!-- Enable XAML source generation for faster build times and improved performance.
-		     This generates C# code from XAML at compile time instead of runtime inflation.
-		     To disable, remove this line.
-		     For individual files, you can override by setting Inflator metadata:
-		       <MauiXaml Update="MyPage.xaml" Inflator="Default" /> (reverts to defaults: Runtime for Debug, XamlC for Release)
-		       <MauiXaml Update="MyPage.xaml" Inflator="Runtime" /> (force runtime inflation) -->
-		<MauiXamlInflator>SourceGen</MauiXamlInflator>
+		<!-- El source gen de XAML no alcanza a ver los componentes Razor (se generan en la misma compilacion),
+		     asi que dejamos el inflador por defecto ahora que MainPage hospeda el BlazorWebView. -->
 
 		<!-- Display name -->
 		<ApplicationTitle>GameVault</ApplicationTitle>
@@ -67,7 +62,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />

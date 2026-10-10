@@ -1,25 +1,33 @@
-﻿using System.Collections.ObjectModel;
 using GameVault.Models;
 
 namespace GameVault.Data;
 
 public interface IVideojuegoRepository
 {
-    ObservableCollection<Videojuego> Videojuegos { get; }
+    IReadOnlyList<VideojuegoDto> Videojuegos { get; }
 
     bool EstaInicializado { get; }
 
+    // Los componentes Razor se suscriben para volver a dibujarse cuando cambia la coleccion.
+    event Action? CambioLaColeccion;
+
     Task<ResultadoCarga> InicializarAsync(bool forzarRecarga = false, CancellationToken cancelacion = default);
 
-    IReadOnlyList<Videojuego> ObtenerTodos();
+    VideojuegoDto? ObtenerPorId(int id);
 
-    Videojuego? ObtenerPorId(int id);
+    Task<VideojuegoDto?> ObtenerConResenasAsync(int id, CancellationToken cancelacion = default);
 
-    Videojuego Agregar(Videojuego juego);
+    IReadOnlyList<VideojuegoDto> ObtenerWishlist();
 
-    bool Actualizar(Videojuego juego);
+    IReadOnlyList<VideojuegoDto> ObtenerTerminados();
 
-    bool Eliminar(int id);
+    Task<ResultadoCarga> AgregarAsync(VideojuegoDto nuevo, CancellationToken cancelacion = default);
+
+    Task<ResultadoCarga> AlternarFavoritoAsync(int id, CancellationToken cancelacion = default);
+
+    Task<ResultadoCarga> AlternarCompletadoAsync(int id, CancellationToken cancelacion = default);
+
+    Task<ResultadoCarga> EliminarAsync(int id, CancellationToken cancelacion = default);
 
     IReadOnlyList<string> ObtenerPlataformas();
 
