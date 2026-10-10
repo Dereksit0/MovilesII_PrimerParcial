@@ -93,7 +93,16 @@
                                     </div>
 
                                     <p class="tarjeta-meta">@juego.ValorFormateado</p>
-                                    <p class="tarjeta-meta">@juego.PromedioTexto · @juego.TotalResenasTexto</p>
+                                    <p class="tarjeta-meta">
+                                        @if (juego.TieneResenas)
+                                        {
+                                            @($"{juego.PromedioTexto} · {juego.TotalResenasTexto}")
+                                        }
+                                        else
+                                        {
+                                            @juego.TotalResenasTexto
+                                        }
+                                    </p>
                                 </div>
 
                             </article>

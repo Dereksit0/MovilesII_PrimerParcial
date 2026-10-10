@@ -727,3 +727,39 @@ button {
         object-fit: cover;
     }
 }
+
+/* ---- Detalles finos ---- */
+
+/* El router manda el foco al h1 al navegar; no queremos ver el recuadro negro. */
+h1:focus,
+h1:focus-visible,
+[tabindex="-1"]:focus {
+    outline: none;
+}
+
+.lista-encabezado {
+    margin-bottom: var(--fiori-espacio-s);
+}
+
+.app-main {
+    padding: var(--fiori-espacio-m) var(--fiori-espacio-l) var(--fiori-espacio-xl);
+}
+
+@media (max-width: 54rem) {
+
+    .app-main {
+        padding: var(--fiori-espacio-m) var(--fiori-espacio-m) var(--fiori-espacio-xl);
+    }
+
+    .resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .shell-subtitulo {
+        display: none;
+    }
+
+    .formulario {
+        padding: var(--fiori-espacio-m);
+    }
+}
