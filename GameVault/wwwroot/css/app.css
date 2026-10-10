@@ -468,3 +468,46 @@ button {
     color: inherit;
     font-size: .85rem;
 }
+
+/* ---- Salto entre detalles ---- */
+
+.otros {
+    margin-top: 20px;
+    border-top: 1px solid #28333f;
+    padding-top: 14px;
+}
+
+.otros h3 {
+    margin: 0 0 10px;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    opacity: .6;
+}
+
+.otros-lista {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.otro {
+    flex: 0 0 110px;
+    display: block;
+}
+
+.otro img {
+    width: 110px;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.otro span {
+    display: block;
+    font-size: .74rem;
+    opacity: .7;
+}

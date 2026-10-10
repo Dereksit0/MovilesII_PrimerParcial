@@ -86,12 +86,33 @@ else
         </div>
 
     </article>
+
+    @if (Otros.Count > 0)
+    {
+        <section class="otros">
+            <h3>Otros de tu colección</h3>
+
+            <div class="otros-lista">
+                @foreach (var otro in Otros)
+                {
+                    <a href="@EnlaceA(otro.Id)" class="otro">
+                        @if (otro.TienePortada)
+                        {
+                            <img src="@otro.ImagenUrl" alt="@otro.Titulo" loading="lazy" />
+                        }
+                        <span>@otro.Titulo</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
 }
 
 @code {
     private VideojuegoDto? juego;
     private bool cargando = true;
     private string? error;
+    private int idCargado;
 
     [Parameter]
     public int Id { get; set; }
@@ -115,7 +136,26 @@ else
     private string TextoCompletado =>
         juego?.Completado == true ? "Marcar como pendiente" : "Marcar como terminado";
 
-    protected override async Task OnInitializedAsync() => await CargarAsync();
+    private List<VideojuegoDto> Otros =>
+        [.. Repositorio.Videojuegos.Where(otro => otro.Id != Id).Take(6)];
+
+    private string EnlaceA(int id) =>
+        string.IsNullOrWhiteSpace(Desde)
+            ? $"videojuego/{id}"
+            : $"videojuego/{id}?desde={Uri.EscapeDataString(Desde)}";
+
+    // Va en OnParametersSetAsync y no en OnInitializedAsync: al saltar de un detalle a otro
+    // Blazor reutiliza el mismo componente y solo le cambia el Id de la ruta.
+    protected override async Task OnParametersSetAsync()
+    {
+        if (idCargado == Id && juego is not null)
+        {
+            return;
+        }
+
+        idCargado = Id;
+        await CargarAsync();
+    }
 
     private async Task CargarAsync()
     {
