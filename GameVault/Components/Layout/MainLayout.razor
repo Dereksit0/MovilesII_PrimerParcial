@@ -2,8 +2,20 @@
 
 <div class="app">
 
+    @* Shell bar fija, al estilo de la barra superior de las apps Fiori. *@
     <header class="shell-bar">
-        <h1>GameVault</h1>
+
+        <span class="shell-logo">GV</span>
+
+        <div class="shell-titulos">
+            <span class="shell-titulo">GameVault</span>
+            <span class="shell-subtitulo">Mi colección de videojuegos</span>
+        </div>
+
+        <div class="shell-acciones">
+            <NavLink class="shell-accion" href="nuevo">+ Nuevo juego</NavLink>
+        </div>
+
     </header>
 
     <NavMenu />

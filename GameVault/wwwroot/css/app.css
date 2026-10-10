@@ -350,3 +350,56 @@ button {
     top: var(--fiori-espacio-s);
     cursor: pointer;
 }
+
+/* ---- Piezas de la shell bar ---- */
+
+.shell-logo {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--fiori-radio-s);
+    background: var(--fiori-brand);
+    color: var(--fiori-texto-inverso);
+    font-size: var(--fiori-texto-xs);
+    font-weight: var(--fiori-peso-medio);
+    letter-spacing: .03em;
+}
+
+.shell-titulos {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.shell-titulo {
+    font-size: var(--fiori-texto-l);
+    font-weight: var(--fiori-peso-medio);
+}
+
+.shell-subtitulo {
+    font-size: var(--fiori-texto-xs);
+    opacity: .75;
+}
+
+.shell-acciones {
+    margin-left: auto;
+    display: flex;
+    gap: var(--fiori-espacio-s);
+}
+
+.shell-accion {
+    display: inline-flex;
+    align-items: center;
+    height: 1.75rem;
+    padding: 0 var(--fiori-espacio-s);
+    border: 1px solid rgba(255, 255, 255, .5);
+    border-radius: var(--fiori-radio-s);
+    color: var(--fiori-shell-texto);
+    font-size: var(--fiori-texto-s);
+}
+
+.shell-accion:hover,
+.shell-accion.active {
+    background: rgba(255, 255, 255, .15);
+}
