@@ -7,9 +7,12 @@
 
 <EditForm Model="modelo" OnValidSubmit="GuardarAsync" class="formulario">
 
+    <DataAnnotationsValidator />
+
     <div class="campo">
         <label for="titulo">Título</label>
         <InputText id="titulo" @bind-Value="modelo.Titulo" placeholder="Nombre del juego" />
+        <ValidationMessage For="() => modelo.Titulo" />
     </div>
 
     <div class="campo">
@@ -21,6 +24,7 @@
                 <option value="@plataforma">@plataforma</option>
             }
         </InputSelect>
+        <ValidationMessage For="() => modelo.Plataforma" />
     </div>
 
     <div class="campo">
@@ -32,21 +36,25 @@
                 <option value="@estado">@estado</option>
             }
         </InputSelect>
+        <ValidationMessage For="() => modelo.Estado" />
     </div>
 
     <div class="campo">
         <label for="valor">Valor estimado (MXN)</label>
         <InputNumber id="valor" @bind-Value="modelo.ValorEstimado" />
+        <ValidationMessage For="() => modelo.ValorEstimado" />
     </div>
 
     <div class="campo">
         <label for="metacritic">Metacritic</label>
         <InputNumber id="metacritic" @bind-Value="modelo.Metacritic" placeholder="Opcional" />
+        <ValidationMessage For="() => modelo.Metacritic" />
     </div>
 
     <div class="campo">
         <label for="portada">URL de la portada</label>
         <InputText id="portada" @bind-Value="modelo.ImagenUrl" placeholder="https://..." />
+        <ValidationMessage For="() => modelo.ImagenUrl" />
     </div>
 
     <div class="campo-check">

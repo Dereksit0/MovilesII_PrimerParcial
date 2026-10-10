@@ -323,3 +323,20 @@ button {
     background: transparent;
     color: inherit;
 }
+
+/* ---- Mensajes de validacion ---- */
+
+.validation-message {
+    font-size: .76rem;
+    color: #ff8f8f;
+}
+
+.campo input.invalid,
+.campo select.invalid {
+    border-color: #b35454;
+}
+
+.campo input.modified.valid,
+.campo select.modified.valid {
+    border-color: #3f7a52;
+}

@@ -24,7 +24,15 @@ public class VideojuegoFormDto
 
     [StringLength(400, ErrorMessage = "La URL de la portada es demasiado larga.")]
     [Url(ErrorMessage = "La portada tiene que ser una URL válida (https://...).")]
-    public string? ImagenUrl { get; set; }
+    public string? ImagenUrl
+    {
+        // El campo es opcional: si lo dejan vacio lo guardamos como null para que
+        // la validacion de URL no se queje de una cadena vacia.
+        get => imagenUrl;
+        set => imagenUrl = string.IsNullOrWhiteSpace(value) ? null : value;
+    }
+
+    private string? imagenUrl;
 
     public bool EsFavorito { get; set; }
 
