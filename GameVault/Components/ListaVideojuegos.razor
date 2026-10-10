@@ -56,38 +56,49 @@
             <p class="lista-sub">@Visibles.Count de @Base.Count juegos</p>
         }
 
-        @if (Visibles.Count == 0)
-        {
-            <div class="aviso">@MensajeVacio</div>
-        }
-        else
-        {
-            <div class="tarjetas">
-                @foreach (var juego in Visibles)
+        <div class="master-detail">
+
+            <div class="master">
+                @if (Visibles.Count == 0)
                 {
-                    <article class="tarjeta @(EsSeleccionado(juego) ? "activa" : string.Empty)"
-                             @onclick="() => Seleccionar(juego)">
-
-                        @if (juego.TienePortada)
+                    <div class="aviso">@MensajeVacio</div>
+                }
+                else
+                {
+                    <div class="tarjetas">
+                        @foreach (var juego in Visibles)
                         {
-                            <img src="@juego.ImagenUrl" alt="@juego.Titulo" loading="lazy" />
-                        }
-                        else
-                        {
-                            <div class="sin-portada">@juego.Titulo</div>
-                        }
+                            <article class="tarjeta @(EsSeleccionado(juego) ? "activa" : string.Empty)"
+                                     @onclick="() => Seleccionar(juego)">
 
-                        <div class="tarjeta-cuerpo">
-                            <h2>@juego.Titulo</h2>
-                            <p class="tarjeta-meta">@juego.Plataforma · @juego.Estado</p>
-                            <p class="tarjeta-meta">@juego.ValorFormateado</p>
-                            <p class="tarjeta-meta">@juego.PromedioTexto · @juego.TotalResenasTexto</p>
-                        </div>
+                                @if (juego.TienePortada)
+                                {
+                                    <img src="@juego.ImagenUrl" alt="@juego.Titulo" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="sin-portada">@juego.Titulo</div>
+                                }
 
-                    </article>
+                                <div class="tarjeta-cuerpo">
+                                    <h2>@juego.Titulo</h2>
+                                    <p class="tarjeta-meta">@juego.Plataforma · @juego.Estado</p>
+                                    <p class="tarjeta-meta">@juego.ValorFormateado</p>
+                                    <p class="tarjeta-meta">@juego.PromedioTexto · @juego.TotalResenasTexto</p>
+                                </div>
+
+                            </article>
+                        }
+                    </div>
                 }
             </div>
-        }
+
+            @* Aqui esta el punto del master-detail: el seleccionado baja por cascada al panel. *@
+            <CascadingValue Value="seleccionado" Name="VideojuegoSeleccionado">
+                <PanelDetalle />
+            </CascadingValue>
+
+        </div>
     }
 
 </section>

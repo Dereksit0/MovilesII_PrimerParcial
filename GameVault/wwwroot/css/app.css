@@ -328,3 +328,28 @@ button {
     margin: 0 0 8px;
     font-size: .88rem;
 }
+
+/* ---- Acomodo del master-detail ---- */
+
+.master-detail {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 14px;
+    align-items: start;
+}
+
+.master-detail .panel-detalle {
+    position: sticky;
+    top: 0;
+}
+
+@media (max-width: 860px) {
+    .master-detail {
+        grid-template-columns: 1fr;
+    }
+
+    .master-detail .panel-detalle {
+        position: static;
+        order: -1;
+    }
+}
