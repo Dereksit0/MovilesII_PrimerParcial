@@ -1,0 +1,49 @@
+@* El juego no llega por parametro normal: lo recibe del CascadingValue que pone la lista. *@
+
+<aside class="panel-detalle">
+
+    @if (Seleccionado is null)
+    {
+        <div class="panel-vacio">
+            Selecciona un juego de la lista para ver su detalle.
+        </div>
+    }
+    else
+    {
+        <div class="panel-portada">
+            @if (Seleccionado.TienePortada)
+            {
+                <img src="@Seleccionado.ImagenUrl" alt="@Seleccionado.Titulo" />
+            }
+        </div>
+
+        <h2>@Seleccionado.Titulo</h2>
+
+        <div class="panel-chips">
+            <span class="chip">@Seleccionado.Plataforma</span>
+            <span class="chip">@Seleccionado.Estado</span>
+            @if (Seleccionado.TieneMetacritic)
+            {
+                <span class="chip">@Seleccionado.MetacriticTexto</span>
+            }
+            <span class="chip">@Seleccionado.EtiquetaProgreso</span>
+        </div>
+
+        <dl class="panel-datos">
+            <dt>Valor estimado</dt>
+            <dd>@Seleccionado.ValorFormateado</dd>
+
+            <dt>Calificación de la comunidad</dt>
+            <dd>@Seleccionado.PromedioTexto</dd>
+
+            <dt>Reseñas</dt>
+            <dd>@Seleccionado.TotalResenasTexto</dd>
+        </dl>
+    }
+
+</aside>
+
+@code {
+    [CascadingParameter(Name = "VideojuegoSeleccionado")]
+    public VideojuegoDto? Seleccionado { get; set; }
+}
