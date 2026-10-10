@@ -7,6 +7,17 @@ using Microsoft.OData.ModelBuilder;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// El cliente MAUI Blazor Hybrid corre dentro de un WebView con su propio origen,
+// asi que dejamos pasar cualquier origen mientras trabajamos en local.
+const string PoliticaLocal = "gamevault-local";
+
+builder.Services.AddCors(opciones => opciones.AddPolicy(
+    PoliticaLocal,
+    politica => politica
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod()));
+
 builder.Services.AddControllers()
     .AddOData(opciones => opciones
         .Select()
@@ -32,6 +43,8 @@ using (var alcance = app.Services.CreateScope())
     contexto.Database.EnsureCreated();
     SembradorDeDatos.Sembrar(contexto);
 }
+
+app.UseCors(PoliticaLocal);
 
 app.MapControllers();
 
