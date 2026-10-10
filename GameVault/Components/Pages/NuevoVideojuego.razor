@@ -75,10 +75,10 @@
     </div>
 
     <div class="formulario-acciones">
-        <button type="submit" disabled="@guardando">
+        <button type="submit" class="btn btn-primario" disabled="@guardando">
             @(guardando ? "Guardando..." : "Agregar a la colección")
         </button>
-        <button type="button" @onclick="Cancelar" disabled="@guardando">Cancelar</button>
+        <button type="button" class="btn btn-ghost" @onclick="Cancelar" disabled="@guardando">Cancelar</button>
     </div>
 
 </EditForm>

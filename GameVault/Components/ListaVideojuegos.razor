@@ -19,7 +19,7 @@
     {
         <div class="aviso error">
             <p>@error</p>
-            <button @onclick="RecargarAsync">Intentar de nuevo</button>
+            <button class="btn btn-secundario" @onclick="RecargarAsync">Intentar de nuevo</button>
         </div>
     }
     else
@@ -47,7 +47,7 @@
 
             @if (HayBusqueda)
             {
-                <button class="limpiar" @onclick="LimpiarBusqueda">Limpiar</button>
+                <button class="btn btn-ghost" @onclick="LimpiarBusqueda">Limpiar</button>
             }
         </div>
 

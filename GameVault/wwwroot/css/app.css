@@ -453,3 +453,63 @@ button {
     gap: var(--fiori-espacio-xs);
     margin-bottom: var(--fiori-espacio-xs);
 }
+
+/* ---- Botones ---- */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--fiori-alto-control);
+    padding: 0 var(--fiori-espacio-m);
+    border: 1px solid transparent;
+    border-radius: var(--fiori-radio-s);
+    font-size: var(--fiori-texto-m);
+    background: transparent;
+    color: var(--fiori-brand);
+}
+
+.btn:focus-visible {
+    outline: none;
+    box-shadow: var(--fiori-foco);
+}
+
+.btn:disabled {
+    opacity: .5;
+    cursor: default;
+}
+
+/* Accion principal de la pantalla (el "Emphasized" de Fiori). */
+.btn-primario {
+    background: var(--fiori-brand);
+    border-color: var(--fiori-brand);
+    color: var(--fiori-texto-inverso);
+    font-weight: var(--fiori-peso-medio);
+}
+
+.btn-primario:hover:not(:disabled) {
+    background: var(--fiori-brand-oscuro);
+    border-color: var(--fiori-brand-oscuro);
+}
+
+/* Accion secundaria: mismo peso visual que un boton normal de Fiori. */
+.btn-secundario {
+    background: var(--fiori-superficie);
+    border-color: var(--fiori-borde-fuerte);
+    color: var(--fiori-brand);
+}
+
+.btn-secundario:hover:not(:disabled) {
+    background: var(--fiori-brand-claro);
+}
+
+/* Accion terciaria, sin marco (cancelar, limpiar). */
+.btn-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--fiori-brand);
+}
+
+.btn-ghost:hover:not(:disabled) {
+    background: var(--fiori-brand-claro);
+}
