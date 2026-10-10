@@ -18,6 +18,7 @@ using (var alcance = app.Services.CreateScope())
     var contexto = alcance.ServiceProvider.GetRequiredService<GameVaultContext>();
     contexto.Database.EnsureDeleted();
     contexto.Database.EnsureCreated();
+    SembradorDeDatos.Sembrar(contexto);
 }
 
 app.MapControllers();
