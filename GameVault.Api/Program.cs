@@ -1,9 +1,21 @@
 using GameVault.Api.Data;
+using GameVault.Api.Models;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddOData(opciones => opciones
+        .Select()
+        .Filter()
+        .OrderBy()
+        .Expand()
+        .Count()
+        .SetMaxTop(200)
+        .AddRouteComponents("odata", ConstruirModelo()));
 
 var cadena = builder.Configuration.GetConnectionString("GameVault")
              ?? "Data Source=gamevault.db";
@@ -23,6 +35,27 @@ using (var alcance = app.Services.CreateScope())
 
 app.MapControllers();
 
-app.MapGet("/", () => "GameVault.Api lista. Los datos salen de /odata.");
+app.MapGet("/", () => Results.Text(
+    """
+    GameVault.Api lista.
+
+    /odata/$metadata
+    /odata/Videojuegos
+    /odata/Videojuegos?$expand=Resenas
+    /odata/Videojuegos?$filter=Plataforma eq 'PC'
+    /odata/Videojuegos(1)?$expand=Resenas
+    /odata/Resenas?$filter=VideojuegoId eq 1
+    """,
+    "text/plain"));
 
 app.Run();
+
+static IEdmModel ConstruirModelo()
+{
+    var constructor = new ODataConventionModelBuilder();
+
+    constructor.EntitySet<Videojuego>("Videojuegos");
+    constructor.EntitySet<Resena>("Resenas");
+
+    return constructor.GetEdmModel();
+}
