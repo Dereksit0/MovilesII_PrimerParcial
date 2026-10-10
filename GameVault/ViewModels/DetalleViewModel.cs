@@ -24,6 +24,8 @@ public partial class DetalleViewModel : BaseViewModel
     [NotifyPropertyChangedFor(nameof(HayJuego))]
     [NotifyPropertyChangedFor(nameof(NoEncontrado))]
     [NotifyPropertyChangedFor(nameof(TextoFavorito))]
+    [NotifyPropertyChangedFor(nameof(MostrarMetacritic))]
+    [NotifyPropertyChangedFor(nameof(MostrarFavorito))]
     [NotifyCanExecuteChangedFor(nameof(EditarCommand))]
     [NotifyCanExecuteChangedFor(nameof(AlternarFavoritoCommand))]
     [NotifyCanExecuteChangedFor(nameof(EliminarCommand))]
@@ -32,6 +34,10 @@ public partial class DetalleViewModel : BaseViewModel
     public bool HayJuego => Juego is not null;
 
     public bool NoEncontrado => !HayJuego && !IsBusy;
+
+    public bool MostrarMetacritic => Juego?.TieneMetacritic == true;
+
+    public bool MostrarFavorito => Juego?.EsFavorito == true;
 
     public string TextoFavorito =>
         Juego?.EsFavorito == true ? "Quitar de la wishlist" : "Agregar a la wishlist";

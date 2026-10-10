@@ -26,10 +26,10 @@
                         <Border Style="{StaticResource AccentChipBorder}">
                             <Label Style="{StaticResource AccentChipLabel}" Text="{Binding Juego.Plataforma}" />
                         </Border>
-                        <Border IsVisible="{Binding Juego.TieneMetacritic}" Style="{StaticResource ChipBorder}">
+                        <Border IsVisible="{Binding MostrarMetacritic}" Style="{StaticResource ChipBorder}">
                             <Label Style="{StaticResource ChipLabel}" Text="{Binding Juego.MetacriticTexto}" />
                         </Border>
-                        <Border IsVisible="{Binding Juego.EsFavorito}" Style="{StaticResource SuccessChipBorder}">
+                        <Border IsVisible="{Binding MostrarFavorito}" Style="{StaticResource SuccessChipBorder}">
                             <Label Style="{StaticResource SuccessChipLabel}" Text="En wishlist" />
                         </Border>
                     </HorizontalStackLayout>
