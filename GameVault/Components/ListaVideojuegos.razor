@@ -1,0 +1,194 @@
+@inject IVideojuegoRepository Repositorio
+@implements IDisposable
+
+<section class="lista">
+
+    <header class="lista-encabezado">
+        <h1>@TituloPantalla</h1>
+        <p class="lista-sub">@SubtituloPantalla</p>
+    </header>
+
+    @if (cargando)
+    {
+        <div class="aviso cargando">
+            <span class="spinner"></span>
+            Consultando GameVault.Api...
+        </div>
+    }
+    else if (error is not null)
+    {
+        <div class="aviso error">
+            <p>@error</p>
+            <button @onclick="RecargarAsync">Intentar de nuevo</button>
+        </div>
+    }
+    else
+    {
+        <div class="resumen">
+            <div>
+                <strong>@Base.Count</strong>
+                <small>Juegos</small>
+            </div>
+            <div>
+                <strong>@ValorTotal</strong>
+                <small>Valor total</small>
+            </div>
+            <div>
+                <strong>@Base.Count(juego => juego.Completado)</strong>
+                <small>Terminados</small>
+            </div>
+        </div>
+
+        <div class="buscador">
+            <input type="search"
+                   placeholder="Buscar juego por título..."
+                   value="@textoBusqueda"
+                   @oninput="AlEscribir" />
+
+            @if (HayBusqueda)
+            {
+                <button class="limpiar" @onclick="LimpiarBusqueda">Limpiar</button>
+            }
+        </div>
+
+        @if (HayBusqueda)
+        {
+            <p class="lista-sub">@Visibles.Count de @Base.Count juegos</p>
+        }
+
+        @if (Visibles.Count == 0)
+        {
+            <div class="aviso">@MensajeVacio</div>
+        }
+        else
+        {
+            <div class="tarjetas">
+                @foreach (var juego in Visibles)
+                {
+                    <article class="tarjeta @(EsSeleccionado(juego) ? "activa" : string.Empty)"
+                             @onclick="() => Seleccionar(juego)">
+
+                        @if (juego.TienePortada)
+                        {
+                            <img src="@juego.ImagenUrl" alt="@juego.Titulo" loading="lazy" />
+                        }
+                        else
+                        {
+                            <div class="sin-portada">@juego.Titulo</div>
+                        }
+
+                        <div class="tarjeta-cuerpo">
+                            <h2>@juego.Titulo</h2>
+                            <p class="tarjeta-meta">@juego.Plataforma · @juego.Estado</p>
+                            <p class="tarjeta-meta">@juego.ValorFormateado</p>
+                            <p class="tarjeta-meta">@juego.PromedioTexto · @juego.TotalResenasTexto</p>
+                        </div>
+
+                    </article>
+                }
+            </div>
+        }
+    }
+
+</section>
+
+@code {
+    private bool cargando = true;
+    private string? error;
+    private string textoBusqueda = string.Empty;
+
+    [Parameter]
+    public FiltroLista Filtro { get; set; } = FiltroLista.Todos;
+
+    private VideojuegoDto? seleccionado;
+
+    private IReadOnlyList<VideojuegoDto> Base => Filtro switch
+    {
+        FiltroLista.Wishlist => Repositorio.ObtenerWishlist(),
+        FiltroLista.Terminados => Repositorio.ObtenerTerminados(),
+        _ => Repositorio.Videojuegos
+    };
+
+    private List<VideojuegoDto> Visibles
+    {
+        get
+        {
+            var filtro = textoBusqueda.Trim();
+
+            return string.IsNullOrEmpty(filtro)
+                ? [.. Base]
+                : [.. Base.Where(juego => Coincide(juego.Titulo, filtro))];
+        }
+    }
+
+    private bool HayBusqueda => !string.IsNullOrWhiteSpace(textoBusqueda);
+
+    private string ValorTotal => FormatoMoneda.Formatear(Base.Sum(juego => juego.ValorEstimado));
+
+    private string TituloPantalla => Filtro switch
+    {
+        FiltroLista.Wishlist => "Wishlist",
+        FiltroLista.Terminados => "Terminados",
+        _ => "Mi colección"
+    };
+
+    private string SubtituloPantalla => Filtro switch
+    {
+        FiltroLista.Wishlist => "Lo que quieres conseguir",
+        FiltroLista.Terminados => "Los que ya te acabaste",
+        _ => "Todo lo que tienes registrado"
+    };
+
+    private string MensajeVacio => HayBusqueda
+        ? "Ningún juego coincide con esa búsqueda."
+        : Filtro switch
+        {
+            FiltroLista.Wishlist => "Todavía no marcas ningún juego como deseado.",
+            FiltroLista.Terminados => "Aún no terminas ningún juego.",
+            _ => "La colección está vacía."
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Repositorio.CambioLaColeccion += AlCambiarLaColeccion;
+        await CargarAsync(forzarRecarga: false);
+    }
+
+    private Task RecargarAsync() => CargarAsync(forzarRecarga: true);
+
+    private async Task CargarAsync(bool forzarRecarga)
+    {
+        cargando = true;
+        error = null;
+
+        var resultado = await Repositorio.InicializarAsync(forzarRecarga);
+
+        if (!resultado.Exito)
+        {
+            error = resultado.MensajeError;
+        }
+
+        cargando = false;
+    }
+
+    private void AlEscribir(ChangeEventArgs argumentos) =>
+        textoBusqueda = argumentos.Value?.ToString() ?? string.Empty;
+
+    private void LimpiarBusqueda() => textoBusqueda = string.Empty;
+
+    private void Seleccionar(VideojuegoDto juego) => seleccionado = juego;
+
+    private bool EsSeleccionado(VideojuegoDto juego) => seleccionado?.Id == juego.Id;
+
+    // La misma comparación que usábamos en el buscador del primer parcial: ignora mayúsculas y acentos.
+    private static bool Coincide(string? texto, string filtro) =>
+        System.Globalization.CultureInfo.InvariantCulture.CompareInfo.IndexOf(
+            texto ?? string.Empty,
+            filtro,
+            System.Globalization.CompareOptions.IgnoreCase |
+            System.Globalization.CompareOptions.IgnoreNonSpace) >= 0;
+
+    private void AlCambiarLaColeccion() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Repositorio.CambioLaColeccion -= AlCambiarLaColeccion;
+}

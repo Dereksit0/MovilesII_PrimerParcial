@@ -130,3 +130,141 @@ button {
     top: 10px;
     cursor: pointer;
 }
+
+/* ---- Lista de videojuegos ---- */
+
+.lista-encabezado h1 {
+    margin: 0 0 2px;
+    font-size: 1.5rem;
+}
+
+.lista-sub {
+    margin: 0 0 14px;
+    opacity: .6;
+    font-size: .85rem;
+}
+
+.resumen {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.resumen div {
+    padding: 12px;
+    border: 1px solid #28333f;
+    border-radius: 8px;
+    background: #1b2430;
+    text-align: center;
+}
+
+.resumen strong {
+    display: block;
+    font-size: 1.1rem;
+}
+
+.resumen small {
+    opacity: .6;
+    font-size: .75rem;
+}
+
+.buscador {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.buscador input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #28333f;
+    border-radius: 8px;
+    background: #1b2430;
+    color: inherit;
+    font: inherit;
+}
+
+.buscador .limpiar {
+    padding: 10px 14px;
+    border: 1px solid #28333f;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+}
+
+.tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+}
+
+.tarjeta {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #28333f;
+    border-radius: 10px;
+    background: #1b2430;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.tarjeta.activa {
+    border-color: #4aa3ff;
+}
+
+.tarjeta img {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+    background: #11161d;
+}
+
+.tarjeta .sin-portada {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 2 / 3;
+    padding: 12px;
+    text-align: center;
+    background: #11161d;
+    opacity: .5;
+    font-size: .85rem;
+}
+
+.tarjeta-cuerpo {
+    padding: 10px 12px 12px;
+}
+
+.tarjeta-cuerpo h2 {
+    margin: 0 0 4px;
+    font-size: .95rem;
+}
+
+.tarjeta-meta {
+    margin: 0;
+    font-size: .78rem;
+    opacity: .6;
+}
+
+.cargando {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #3a4756;
+    border-top-color: #4aa3ff;
+    border-radius: 50%;
+    animation: girar .8s linear infinite;
+}
+
+@keyframes girar {
+    to {
+        transform: rotate(360deg);
+    }
+}
