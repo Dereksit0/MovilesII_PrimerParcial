@@ -1,7 +1,6 @@
-﻿using System.Net.Http.Headers;
+using System.Net.Http.Headers;
 using GameVault.Data;
-using GameVault.ViewModels;
-using GameVault.Views;
+using GameVault.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -20,36 +19,19 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        builder.Services.AddSingleton(_ =>
+        builder.Services.AddMauiBlazorWebView();
+
+        builder.Services.AddHttpClient<IVideojuegoApiService, VideojuegoApiService>(http =>
         {
-            var http = new HttpClient
-            {
-                BaseAddress = new Uri("https://www.cheapshark.com/"),
-                Timeout = TimeSpan.FromSeconds(20)
-            };
-
-            http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GameVault", "1.0"));
-            http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("(proyecto-escolar-maui)"));
+            http.BaseAddress = ApiGameVault.BaseAddress;
+            http.Timeout = TimeSpan.FromSeconds(20);
             http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            return http;
         });
 
         builder.Services.AddSingleton<IVideojuegoRepository, VideojuegoRepository>();
 
-        builder.Services.AddSingleton<WishlistViewModel>();
-
-        builder.Services.AddTransient<ListaViewModel>();
-        builder.Services.AddTransient<ListaPage>();
-        builder.Services.AddTransient<DetalleViewModel>();
-        builder.Services.AddTransient<DetallePage>();
-        builder.Services.AddTransient<WishlistPage>();
-        builder.Services.AddTransient<FormularioViewModel>();
-        builder.Services.AddTransient<FormularioPage>();
-        builder.Services.AddTransient<TerminadosViewModel>();
-        builder.Services.AddTransient<TerminadosPage>();
-
 #if DEBUG
+        builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
 

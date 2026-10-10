@@ -1,19 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Text.Json;
 using GameVault.Models;
+using GameVault.Services;
 
 namespace GameVault.Data;
 
+// Ya no habla con CheapShark: ahora todo sale de GameVault.Api por OData.
+// Guarda en memoria lo ultimo que trajo el servicio para que la UI no vuelva a pedir en cada clic.
 public class VideojuegoRepository : IVideojuegoRepository
 {
-    private const string PlantillaRuta = "api/1.0/deals?storeID=1&pageSize=60&pageNumber={0}&sortBy=Metacritic&steamRating=80";
-    private const int PaginasACargar = 4;
-    private const string PortadaSteam = "https://cdn.cloudflare.steamstatic.com/steam/apps/{0}/library_600x900.jpg";
-    private const int VerificacionesEnParalelo = 12;
-    private const int UmbralJuegoTerminado = 92;
-    private const decimal TipoDeCambio = 18.50m;
-
     private static readonly string[] Plataformas =
     [
         "PC", "PS5", "PS4", "PS2", "PS1", "Xbox Series X", "Xbox 360",
@@ -26,96 +20,155 @@ public class VideojuegoRepository : IVideojuegoRepository
         "Solo cartucho/disco", "Vendido"
     ];
 
-    private static readonly JsonSerializerOptions OpcionesJson = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private readonly IVideojuegoApiService _api;
+    private readonly List<VideojuegoDto> _juegos = [];
 
-    private readonly HttpClient _http;
-    private int _siguienteId = 1;
-
-    public VideojuegoRepository(HttpClient http)
+    public VideojuegoRepository(IVideojuegoApiService api)
     {
-        _http = http;
+        _api = api;
     }
 
-    public ObservableCollection<Videojuego> Videojuegos { get; } = [];
+    public IReadOnlyList<VideojuegoDto> Videojuegos => _juegos;
 
     public bool EstaInicializado { get; private set; }
 
-    public async Task<ResultadoCarga> InicializarAsync(bool forzarRecarga = false, CancellationToken cancelacion = default)
+    public event Action? CambioLaColeccion;
+
+    public async Task<ResultadoCarga> InicializarAsync(
+        bool forzarRecarga = false,
+        CancellationToken cancelacion = default)
     {
         if (EstaInicializado && !forzarRecarga)
         {
             return ResultadoCarga.Ok();
         }
 
-        try
+        return await EjecutarAsync(async () =>
         {
-            var ofertas = new List<OfertaJuegoDto>();
+            var juegos = await _api.ObtenerTodosAsync(cancelacion);
 
-            for (var pagina = 0; pagina < PaginasACargar; pagina++)
-            {
-                var ruta = string.Format(CultureInfo.InvariantCulture, PlantillaRuta, pagina);
-
-                using var respuesta = await _http.GetAsync(ruta, cancelacion);
-                respuesta.EnsureSuccessStatusCode();
-
-                await using var flujo = await respuesta.Content.ReadAsStreamAsync(cancelacion);
-                var ofertasDeLaPagina = await JsonSerializer.DeserializeAsync<List<OfertaJuegoDto>>(
-                    flujo, OpcionesJson, cancelacion);
-
-                if (ofertasDeLaPagina is null || ofertasDeLaPagina.Count == 0)
-                {
-                    break;
-                }
-
-                ofertas.AddRange(ofertasDeLaPagina);
-            }
-
-            _siguienteId = 1;
-
-            var vistos = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            var juegos = new List<Videojuego>();
-
-            foreach (var oferta in ofertas)
-            {
-                var clave = string.IsNullOrWhiteSpace(oferta.SteamAppId)
-                    ? oferta.Title ?? string.Empty
-                    : oferta.SteamAppId;
-
-                if (!vistos.Add(clave))
-                {
-                    continue;
-                }
-
-                var juego = Mapear(oferta);
-                if (juego is not null)
-                {
-                    juegos.Add(juego);
-                }
-            }
-
-            await AsegurarPortadasAsync(juegos, cancelacion);
-
-            Videojuegos.Clear();
-            foreach (var juego in juegos)
-            {
-                Videojuegos.Add(juego);
-            }
+            _juegos.Clear();
+            _juegos.AddRange(juegos);
 
             EstaInicializado = true;
+            Avisar();
+        });
+    }
+
+    public VideojuegoDto? ObtenerPorId(int id) => _juegos.FirstOrDefault(juego => juego.Id == id);
+
+    public async Task<VideojuegoDto?> ObtenerConResenasAsync(int id, CancellationToken cancelacion = default)
+    {
+        var juego = await _api.ObtenerPorIdAsync(id, cancelacion);
+
+        if (juego is null)
+        {
+            return null;
+        }
+
+        var indice = _juegos.FindIndex(actual => actual.Id == id);
+
+        if (indice >= 0)
+        {
+            _juegos[indice] = juego;
+        }
+
+        return juego;
+    }
+
+    // Reglas que ya traiamos del primer parcial: la wishlist son los favoritos o los deseados.
+    public IReadOnlyList<VideojuegoDto> ObtenerWishlist() =>
+        [.. _juegos.Where(juego =>
+            juego.EsFavorito ||
+            string.Equals(juego.Estado, "Deseado", StringComparison.OrdinalIgnoreCase))];
+
+    public IReadOnlyList<VideojuegoDto> ObtenerTerminados() =>
+        [.. _juegos.Where(juego => juego.Completado)];
+
+    public Task<ResultadoCarga> AgregarAsync(VideojuegoDto nuevo, CancellationToken cancelacion = default) =>
+        EjecutarAsync(async () =>
+        {
+            var creado = await _api.CrearAsync(nuevo, cancelacion);
+
+            if (creado is not null)
+            {
+                // Los nuevos entran al principio, igual que antes.
+                _juegos.Insert(0, creado);
+                Avisar();
+            }
+        });
+
+    public Task<ResultadoCarga> AlternarFavoritoAsync(int id, CancellationToken cancelacion = default) =>
+        CambiarBanderasAsync(id, juego => juego.EsFavorito = !juego.EsFavorito, cancelacion);
+
+    public Task<ResultadoCarga> AlternarCompletadoAsync(int id, CancellationToken cancelacion = default) =>
+        CambiarBanderasAsync(id, juego => juego.Completado = !juego.Completado, cancelacion);
+
+    public Task<ResultadoCarga> EliminarAsync(int id, CancellationToken cancelacion = default) =>
+        EjecutarAsync(async () =>
+        {
+            if (await _api.EliminarAsync(id, cancelacion))
+            {
+                _juegos.RemoveAll(juego => juego.Id == id);
+                Avisar();
+            }
+        });
+
+    public IReadOnlyList<string> ObtenerPlataformas() => Plataformas;
+
+    public IReadOnlyList<string> ObtenerEstados() => Estados;
+
+    private Task<ResultadoCarga> CambiarBanderasAsync(
+        int id,
+        Action<VideojuegoDto> cambio,
+        CancellationToken cancelacion) =>
+        EjecutarAsync(async () =>
+        {
+            var juego = ObtenerPorId(id);
+
+            if (juego is null)
+            {
+                return;
+            }
+
+            var copia = juego.Clonar();
+            cambio(copia);
+
+            var guardado = await _api.ActualizarBanderasAsync(
+                id, copia.EsFavorito, copia.Completado, cancelacion);
+
+            if (!guardado)
+            {
+                return;
+            }
+
+            var indice = _juegos.FindIndex(actual => actual.Id == id);
+
+            if (indice >= 0)
+            {
+                _juegos[indice] = copia;
+            }
+
+            Avisar();
+        });
+
+    // Los mismos mensajes amigables que ya mostrabamos cuando el servicio fallaba.
+    private static async Task<ResultadoCarga> EjecutarAsync(Func<Task> operacion)
+    {
+        try
+        {
+            await operacion();
             return ResultadoCarga.Ok();
         }
         catch (TaskCanceledException)
         {
             return ResultadoCarga.Fallo(
-                "La solicitud tardó demasiado y se canceló. Revisa tu conexión e inténtalo de nuevo.");
+                "La solicitud tardó demasiado y se canceló. Revisa que GameVault.Api siga corriendo.");
         }
         catch (HttpRequestException ex)
         {
             return ResultadoCarga.Fallo(
-                $"No se pudo contactar el servicio de juegos. {ex.Message}");
+                $"No se pudo contactar GameVault.Api en {ApiGameVault.BaseAddress}. {ex.Message}");
         }
         catch (JsonException)
         {
@@ -124,140 +177,5 @@ public class VideojuegoRepository : IVideojuegoRepository
         }
     }
 
-    public IReadOnlyList<Videojuego> ObtenerTodos() => Videojuegos;
-
-    public Videojuego? ObtenerPorId(int id) => Videojuegos.FirstOrDefault(j => j.Id == id);
-
-    public Videojuego Agregar(Videojuego juego)
-    {
-        ArgumentNullException.ThrowIfNull(juego);
-
-        juego.Id = _siguienteId++;
-        Videojuegos.Insert(0, juego);
-        return juego;
-    }
-
-    public bool Actualizar(Videojuego juego)
-    {
-        ArgumentNullException.ThrowIfNull(juego);
-
-        var indice = IndiceDe(juego.Id);
-        if (indice < 0)
-        {
-            return false;
-        }
-
-        Videojuegos[indice] = juego;
-        return true;
-    }
-
-    public bool Eliminar(int id)
-    {
-        var indice = IndiceDe(id);
-        if (indice < 0)
-        {
-            return false;
-        }
-
-        Videojuegos.RemoveAt(indice);
-        return true;
-    }
-
-    public IReadOnlyList<string> ObtenerPlataformas() => Plataformas;
-
-    public IReadOnlyList<string> ObtenerEstados() => Estados;
-
-    private async Task AsegurarPortadasAsync(IReadOnlyList<Videojuego> juegos, CancellationToken cancelacion)
-    {
-        using var limite = new SemaphoreSlim(VerificacionesEnParalelo);
-
-        var verificaciones = juegos.Select(async juego =>
-        {
-            if (string.IsNullOrWhiteSpace(juego.ImagenUrl))
-            {
-                juego.ImagenUrl = juego.Miniatura;
-                return;
-            }
-
-            await limite.WaitAsync(cancelacion);
-
-            try
-            {
-                using var peticion = new HttpRequestMessage(HttpMethod.Head, juego.ImagenUrl);
-                using var respuesta = await _http.SendAsync(peticion, cancelacion);
-
-                if (!respuesta.IsSuccessStatusCode)
-                {
-                    juego.ImagenUrl = juego.Miniatura;
-                }
-            }
-            catch (Exception)
-            {
-                juego.ImagenUrl = juego.Miniatura;
-            }
-            finally
-            {
-                limite.Release();
-            }
-        });
-
-        await Task.WhenAll(verificaciones);
-    }
-
-    private int IndiceDe(int id)
-    {
-        for (var i = 0; i < Videojuegos.Count; i++)
-        {
-            if (Videojuegos[i].Id == id)
-            {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    private Videojuego? Mapear(OfertaJuegoDto oferta)
-    {
-        if (string.IsNullOrWhiteSpace(oferta.Title))
-        {
-            return null;
-        }
-
-        var enOferta = oferta.IsOnSale == "1";
-        var metacritic = ParsearEntero(oferta.MetacriticScore);
-
-        return new Videojuego
-        {
-            Id = _siguienteId++,
-            Titulo = oferta.Title.Trim(),
-            Plataforma = "PC",
-            Estado = enOferta ? "Deseado" : "En colección",
-            ValorEstimado = Math.Round(ParsearPrecio(oferta.NormalPrice) * TipoDeCambio, 2),
-            Valoracion = string.IsNullOrWhiteSpace(oferta.SteamRatingText) ? null : oferta.SteamRatingText,
-            Metacritic = metacritic,
-            ImagenUrl = ConstruirPortada(oferta.SteamAppId),
-            Miniatura = LimpiarMiniatura(oferta.Thumb),
-            EsFavorito = enOferta,
-            Completado = metacritic >= UmbralJuegoTerminado
-        };
-    }
-
-    private static decimal ParsearPrecio(string? valor) =>
-        decimal.TryParse(valor, NumberStyles.Number, CultureInfo.InvariantCulture, out var precio)
-            ? precio
-            : 0m;
-
-    private static int? ParsearEntero(string? valor) =>
-        int.TryParse(valor, NumberStyles.Integer, CultureInfo.InvariantCulture, out var numero) && numero > 0
-            ? numero
-            : null;
-
-    private static string ConstruirPortada(string? steamAppId) =>
-        string.IsNullOrWhiteSpace(steamAppId) || !steamAppId.All(char.IsDigit)
-            ? string.Empty
-            : string.Format(CultureInfo.InvariantCulture, PortadaSteam, steamAppId);
-
-    private static string LimpiarMiniatura(string? thumb) =>
-        string.IsNullOrWhiteSpace(thumb) ? string.Empty : thumb.Trim();
+    private void Avisar() => CambioLaColeccion?.Invoke();
 }

@@ -59,3 +59,8 @@ desktop.ini
 *.tmp
 *.bak
 *.swp
+
+# Base local de la api
+*.db
+*.db-shm
+*.db-wal

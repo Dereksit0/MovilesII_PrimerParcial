@@ -1,0 +1,11 @@
+<Router AppAssembly="@typeof(MauiProgram).Assembly">
+    <Found Context="datosDeRuta">
+        <RouteView RouteData="@datosDeRuta" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@datosDeRuta" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div class="aviso">No encontramos esa pantalla.</div>
+        </LayoutView>
+    </NotFound>
+</Router>
