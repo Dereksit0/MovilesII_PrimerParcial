@@ -56,47 +56,58 @@
             <p class="lista-sub">@Visibles.Count de @Base.Count juegos</p>
         }
 
-        @if (Visibles.Count == 0)
-        {
-            <div class="aviso">@MensajeVacio</div>
-        }
-        else
-        {
-            <div class="tarjetas">
-                @foreach (var juego in Visibles)
+        <div class="master-detail">
+
+            <div class="master">
+                @if (Visibles.Count == 0)
                 {
-                    <article class="tarjeta @(EsSeleccionado(juego) ? "activa" : string.Empty)"
-                             @onclick="() => Seleccionar(juego)">
-
-                        @if (juego.TienePortada)
+                    <div class="aviso">@MensajeVacio</div>
+                }
+                else
+                {
+                    <div class="tarjetas">
+                        @foreach (var juego in Visibles)
                         {
-                            <img src="@juego.ImagenUrl" alt="@juego.Titulo" loading="lazy" />
-                        }
-                        else
-                        {
-                            <div class="sin-portada">@juego.Titulo</div>
-                        }
+                            <article class="tarjeta @(EsSeleccionado(juego) ? "activa" : string.Empty)"
+                                     @onclick="() => SeleccionarAsync(juego)">
 
-                        <div class="tarjeta-cuerpo">
-                            <h2>@juego.Titulo</h2>
-
-                            <div class="tarjeta-chips">
-                                <span class="chip chip-neutral">@juego.Plataforma</span>
-                                <span class="@ChipFiori.DeEstado(juego.Estado)">@juego.Estado</span>
-                                @if (juego.Completado)
+                                @if (juego.TienePortada)
                                 {
-                                    <span class="@ChipFiori.DeProgreso(true)">Completado</span>
+                                    <img src="@juego.ImagenUrl" alt="@juego.Titulo" loading="lazy" />
                                 }
-                            </div>
+                                else
+                                {
+                                    <div class="sin-portada">@juego.Titulo</div>
+                                }
 
-                            <p class="tarjeta-meta">@juego.ValorFormateado</p>
-                            <p class="tarjeta-meta">@juego.PromedioTexto · @juego.TotalResenasTexto</p>
-                        </div>
+                                <div class="tarjeta-cuerpo">
+                                    <h2>@juego.Titulo</h2>
 
-                    </article>
+                                    <div class="tarjeta-chips">
+                                        <span class="chip chip-neutral">@juego.Plataforma</span>
+                                        <span class="@ChipFiori.DeEstado(juego.Estado)">@juego.Estado</span>
+                                        @if (juego.Completado)
+                                        {
+                                            <span class="@ChipFiori.DeProgreso(true)">Completado</span>
+                                        }
+                                    </div>
+
+                                    <p class="tarjeta-meta">@juego.ValorFormateado</p>
+                                    <p class="tarjeta-meta">@juego.PromedioTexto · @juego.TotalResenasTexto</p>
+                                </div>
+
+                            </article>
+                        }
+                    </div>
                 }
             </div>
-        }
+
+            @* Aqui esta el punto del master-detail: el seleccionado baja por cascada al panel. *@
+            <CascadingValue Value="seleccionado" Name="VideojuegoSeleccionado">
+                <PanelDetalle />
+            </CascadingValue>
+
+        </div>
     }
 
 </section>
@@ -180,12 +191,37 @@
         cargando = false;
     }
 
-    private void AlEscribir(ChangeEventArgs argumentos) =>
+    private void AlEscribir(ChangeEventArgs argumentos)
+    {
         textoBusqueda = argumentos.Value?.ToString() ?? string.Empty;
+        OlvidarSeleccionSiYaNoSeVe();
+    }
 
     private void LimpiarBusqueda() => textoBusqueda = string.Empty;
 
-    private void Seleccionar(VideojuegoDto juego) => seleccionado = juego;
+    // Si el juego seleccionado deja de aparecer en la lista (por la busqueda o porque
+    // se borro), el panel se quedaba mostrandolo como si nada.
+    private void OlvidarSeleccionSiYaNoSeVe()
+    {
+        if (seleccionado is not null && Visibles.All(juego => juego.Id != seleccionado.Id))
+        {
+            seleccionado = null;
+        }
+    }
+
+    private async Task SeleccionarAsync(VideojuegoDto juego)
+    {
+        // Pintamos de inmediato lo que ya teniamos y luego pedimos el juego con sus
+        // resenas frescas (GET /odata/Videojuegos(id)?$expand=Resenas).
+        seleccionado = juego;
+
+        var actualizado = await Repositorio.ObtenerConResenasAsync(juego.Id);
+
+        if (actualizado is not null && seleccionado?.Id == actualizado.Id)
+        {
+            seleccionado = actualizado;
+        }
+    }
 
     private bool EsSeleccionado(VideojuegoDto juego) => seleccionado?.Id == juego.Id;
 
@@ -197,7 +233,11 @@
             System.Globalization.CompareOptions.IgnoreCase |
             System.Globalization.CompareOptions.IgnoreNonSpace) >= 0;
 
-    private void AlCambiarLaColeccion() => InvokeAsync(StateHasChanged);
+    private void AlCambiarLaColeccion() => InvokeAsync(() =>
+    {
+        OlvidarSeleccionSiYaNoSeVe();
+        StateHasChanged();
+    });
 
     public void Dispose() => Repositorio.CambioLaColeccion -= AlCambiarLaColeccion;
 }

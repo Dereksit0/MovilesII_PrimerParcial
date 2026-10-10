@@ -513,3 +513,217 @@ button {
 .btn-ghost:hover:not(:disabled) {
     background: var(--fiori-brand-claro);
 }
+
+/* ---- Master-detail ---- */
+
+.master-detail {
+    display: grid;
+    grid-template-columns: 1fr 20rem;
+    gap: var(--fiori-espacio-m);
+    align-items: start;
+}
+
+.master-detail .panel-detalle {
+    position: sticky;
+    top: 0;
+}
+
+/* ---- Panel de detalle ---- */
+
+.panel-detalle {
+    padding: var(--fiori-espacio-m);
+    border-radius: var(--fiori-radio-m);
+    background: var(--fiori-superficie);
+    box-shadow: var(--fiori-sombra-tarjeta);
+}
+
+.panel-vacio {
+    padding: var(--fiori-espacio-l) var(--fiori-espacio-s);
+    text-align: center;
+    color: var(--fiori-texto-suave);
+    font-size: var(--fiori-texto-s);
+}
+
+.panel-portada img {
+    width: 100%;
+    max-height: 16rem;
+    object-fit: cover;
+    border-radius: var(--fiori-radio-s);
+    display: block;
+}
+
+.panel-detalle h2 {
+    margin: var(--fiori-espacio-s) 0;
+    font-size: var(--fiori-titulo-s);
+}
+
+.panel-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fiori-espacio-xs);
+    margin-bottom: var(--fiori-espacio-m);
+}
+
+.panel-datos {
+    margin: 0;
+    display: grid;
+    gap: var(--fiori-espacio-xs);
+}
+
+.panel-datos dt {
+    font-size: var(--fiori-texto-xs);
+    color: var(--fiori-texto-suave);
+}
+
+.panel-datos dd {
+    margin: 0 0 var(--fiori-espacio-s);
+    font-size: var(--fiori-texto-m);
+}
+
+/* ---- Reseñas ---- */
+
+.panel-resenas {
+    margin-top: var(--fiori-espacio-m);
+    border-top: 1px solid var(--fiori-borde);
+    padding-top: var(--fiori-espacio-m);
+}
+
+.panel-resenas h3 {
+    margin: 0 0 var(--fiori-espacio-s);
+    font-size: var(--fiori-texto-xs);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--fiori-texto-suave);
+}
+
+.resena {
+    padding: var(--fiori-espacio-s);
+    margin-bottom: var(--fiori-espacio-s);
+    border-radius: var(--fiori-radio-s);
+    background: var(--fiori-superficie-alt);
+    border: 1px solid var(--fiori-borde);
+}
+
+.resena-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--fiori-espacio-s);
+    margin-bottom: var(--fiori-espacio-xs);
+}
+
+.resena-autor {
+    font-size: var(--fiori-texto-s);
+    font-weight: var(--fiori-peso-medio);
+}
+
+.resena-comentario {
+    margin: 0 0 var(--fiori-espacio-xs);
+    font-size: var(--fiori-texto-s);
+}
+
+.resena-fecha {
+    font-size: var(--fiori-texto-xs);
+    color: var(--fiori-texto-suave);
+}
+
+/* ---- Detalle completo ---- */
+
+.detalle {
+    display: grid;
+    grid-template-columns: 17rem 1fr;
+    gap: var(--fiori-espacio-l);
+    align-items: start;
+    padding: var(--fiori-espacio-l);
+    border-radius: var(--fiori-radio-m);
+    background: var(--fiori-superficie);
+    box-shadow: var(--fiori-sombra-tarjeta);
+}
+
+.detalle-portada img {
+    width: 100%;
+    border-radius: var(--fiori-radio-s);
+    display: block;
+}
+
+.detalle-cuerpo h1 {
+    margin: 0 0 var(--fiori-espacio-s);
+    font-size: var(--fiori-titulo-m);
+}
+
+.detalle-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fiori-espacio-s);
+    margin: var(--fiori-espacio-m) 0 var(--fiori-espacio-xs);
+}
+
+.boton-volver {
+    margin-bottom: var(--fiori-espacio-m);
+}
+
+/* ---- Salto entre detalles ---- */
+
+.otros {
+    margin-top: var(--fiori-espacio-l);
+    padding-top: var(--fiori-espacio-m);
+    border-top: 1px solid var(--fiori-borde);
+}
+
+.otros h3 {
+    margin: 0 0 var(--fiori-espacio-s);
+    font-size: var(--fiori-texto-xs);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--fiori-texto-suave);
+}
+
+.otros-lista {
+    display: flex;
+    gap: var(--fiori-espacio-s);
+    overflow-x: auto;
+    padding-bottom: var(--fiori-espacio-xs);
+}
+
+.otro {
+    flex: 0 0 7rem;
+    display: block;
+}
+
+.otro img {
+    width: 7rem;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: var(--fiori-radio-s);
+    display: block;
+    margin-bottom: var(--fiori-espacio-xs);
+}
+
+.otro span {
+    display: block;
+    font-size: var(--fiori-texto-xs);
+    color: var(--fiori-texto-suave);
+}
+
+/* ---- Pantallas angostas ---- */
+
+@media (max-width: 54rem) {
+
+    .master-detail {
+        grid-template-columns: 1fr;
+    }
+
+    .master-detail .panel-detalle {
+        position: static;
+        order: -1;
+    }
+
+    .detalle {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-portada img {
+        max-height: 15rem;
+        object-fit: cover;
+    }
+}

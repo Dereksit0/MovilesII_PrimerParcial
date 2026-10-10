@@ -1,0 +1,90 @@
+@inject NavigationManager Navegacion
+
+@* El juego no llega por parametro normal: lo recibe del CascadingValue que pone la lista. *@
+
+<aside class="panel-detalle">
+
+    @if (Seleccionado is null)
+    {
+        <div class="panel-vacio">
+            Selecciona un juego de la lista para ver su detalle.
+        </div>
+    }
+    else
+    {
+        <div class="panel-portada">
+            @if (Seleccionado.TienePortada)
+            {
+                <img src="@Seleccionado.ImagenUrl" alt="@Seleccionado.Titulo" />
+            }
+        </div>
+
+        <h2>@Seleccionado.Titulo</h2>
+
+        <div class="panel-chips">
+            <span class="chip">@Seleccionado.Plataforma</span>
+            <span class="chip">@Seleccionado.Estado</span>
+            @if (Seleccionado.TieneMetacritic)
+            {
+                <span class="chip">@Seleccionado.MetacriticTexto</span>
+            }
+            <span class="chip">@Seleccionado.EtiquetaProgreso</span>
+        </div>
+
+        <dl class="panel-datos">
+            <dt>Valor estimado</dt>
+            <dd>@Seleccionado.ValorFormateado</dd>
+
+            <dt>Calificación de la comunidad</dt>
+            <dd>@Seleccionado.PromedioTexto</dd>
+
+            <dt>Reseñas</dt>
+            <dd>@Seleccionado.TotalResenasTexto</dd>
+        </dl>
+
+        <button class="boton-detalle" @onclick="VerDetalleCompleto">Ver detalle completo</button>
+
+        @* Las reseñas son la entidad relacionada: llegan en el mismo JSON por el $expand. *@
+        <div class="panel-resenas">
+            <h3>Reseñas</h3>
+
+            @if (!Seleccionado.TieneResenas)
+            {
+                <p class="panel-vacio">Este juego todavía no tiene reseñas.</p>
+            }
+            else
+            {
+                @foreach (var resena in Seleccionado.Resenas.OrderByDescending(r => r.Fecha))
+                {
+                    <div class="resena">
+                        <div class="resena-encabezado">
+                            <span class="resena-autor">@resena.Autor</span>
+                            <span class="chip">@resena.CalificacionTexto</span>
+                        </div>
+                        <p class="resena-comentario">@resena.Comentario</p>
+                        <span class="resena-fecha">@resena.FechaCorta</span>
+                    </div>
+                }
+            }
+        </div>
+    }
+
+</aside>
+
+@code {
+    [CascadingParameter(Name = "VideojuegoSeleccionado")]
+    public VideojuegoDto? Seleccionado { get; set; }
+
+    private void VerDetalleCompleto()
+    {
+        if (Seleccionado is null)
+        {
+            return;
+        }
+
+        // Nos llevamos la pestaña de donde salimos para que el boton de volver regrese ahi.
+        var desde = Navegacion.ToBaseRelativePath(Navegacion.Uri);
+
+        Navegacion.NavigateTo($"videojuego/{Seleccionado.Id}?desde={Uri.EscapeDataString(desde)}");
+    }
+}
