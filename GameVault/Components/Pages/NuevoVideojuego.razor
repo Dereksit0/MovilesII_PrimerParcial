@@ -9,6 +9,11 @@
 
     <DataAnnotationsValidator />
 
+    @if (error is not null)
+    {
+        <div class="aviso error">@error</div>
+    }
+
     <div class="campo">
         <label for="titulo">Título</label>
         <InputText id="titulo" @bind-Value="modelo.Titulo" placeholder="Nombre del juego" />
@@ -70,16 +75,38 @@
     </div>
 
     <div class="formulario-acciones">
-        <button type="submit">Agregar a la colección</button>
-        <button type="button" @onclick="Cancelar">Cancelar</button>
+        <button type="submit" disabled="@guardando">
+            @(guardando ? "Guardando..." : "Agregar a la colección")
+        </button>
+        <button type="button" @onclick="Cancelar" disabled="@guardando">Cancelar</button>
     </div>
 
 </EditForm>
 
 @code {
     private VideojuegoFormDto modelo = new();
+    private bool guardando;
+    private string? error;
 
-    private Task GuardarAsync() => Task.CompletedTask;
+    // Solo llega aqui si pasaron todas las validaciones.
+    private async Task GuardarAsync()
+    {
+        guardando = true;
+        error = null;
+
+        // POST /odata/Videojuegos y, si sale bien, el juego ya entra en la lista.
+        var resultado = await Repositorio.AgregarAsync(modelo.AVideojuego());
+
+        guardando = false;
+
+        if (!resultado.Exito)
+        {
+            error = resultado.MensajeError;
+            return;
+        }
+
+        Navegacion.NavigateTo("/");
+    }
 
     private void Cancelar() => Navegacion.NavigateTo("/");
 }
