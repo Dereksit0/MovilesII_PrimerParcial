@@ -403,3 +403,53 @@ button {
 .shell-accion.active {
     background: rgba(255, 255, 255, .15);
 }
+
+/* ---- Chips de estado ---- */
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--fiori-espacio-s);
+    height: 1.25rem;
+    border: 1px solid transparent;
+    border-radius: var(--fiori-radio-chip);
+    font-size: var(--fiori-texto-xs);
+    white-space: nowrap;
+}
+
+.chip-neutral {
+    background: var(--fiori-neutral-fondo);
+    border-color: var(--fiori-borde);
+    color: var(--fiori-neutral);
+}
+
+.chip-informativo {
+    background: var(--fiori-informativo-fondo);
+    border-color: var(--fiori-informativo);
+    color: var(--fiori-informativo);
+}
+
+.chip-positivo {
+    background: var(--fiori-positivo-fondo);
+    border-color: var(--fiori-positivo);
+    color: var(--fiori-positivo);
+}
+
+.chip-critico {
+    background: var(--fiori-critico-fondo);
+    border-color: var(--fiori-critico);
+    color: var(--fiori-critico);
+}
+
+.chip-negativo {
+    background: var(--fiori-negativo-fondo);
+    border-color: var(--fiori-negativo);
+    color: var(--fiori-negativo);
+}
+
+.tarjeta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fiori-espacio-xs);
+    margin-bottom: var(--fiori-espacio-xs);
+}
