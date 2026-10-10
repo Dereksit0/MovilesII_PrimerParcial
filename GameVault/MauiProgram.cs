@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using GameVault.Data;
+using GameVault.Services;
 using GameVault.ViewModels;
 using GameVault.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,13 @@ public static class MauiProgram
             http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             return http;
+        });
+
+        builder.Services.AddHttpClient<IVideojuegoApiService, VideojuegoApiService>(http =>
+        {
+            http.BaseAddress = ApiGameVault.BaseAddress;
+            http.Timeout = TimeSpan.FromSeconds(20);
+            http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         });
 
         builder.Services.AddSingleton<IVideojuegoRepository, VideojuegoRepository>();
