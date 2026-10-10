@@ -19,7 +19,7 @@
     {
         <div class="aviso error">
             <p>@error</p>
-            <button @onclick="RecargarAsync">Intentar de nuevo</button>
+            <button class="btn btn-secundario" @onclick="RecargarAsync">Intentar de nuevo</button>
         </div>
     }
     else
@@ -47,7 +47,7 @@
 
             @if (HayBusqueda)
             {
-                <button class="limpiar" @onclick="LimpiarBusqueda">Limpiar</button>
+                <button class="btn btn-ghost" @onclick="LimpiarBusqueda">Limpiar</button>
             }
         </div>
 
@@ -82,9 +82,27 @@
 
                                 <div class="tarjeta-cuerpo">
                                     <h2>@juego.Titulo</h2>
-                                    <p class="tarjeta-meta">@juego.Plataforma · @juego.Estado</p>
+
+                                    <div class="tarjeta-chips">
+                                        <span class="chip chip-neutral">@juego.Plataforma</span>
+                                        <span class="@ChipFiori.DeEstado(juego.Estado)">@juego.Estado</span>
+                                        @if (juego.Completado)
+                                        {
+                                            <span class="@ChipFiori.DeProgreso(true)">Completado</span>
+                                        }
+                                    </div>
+
                                     <p class="tarjeta-meta">@juego.ValorFormateado</p>
-                                    <p class="tarjeta-meta">@juego.PromedioTexto · @juego.TotalResenasTexto</p>
+                                    <p class="tarjeta-meta">
+                                        @if (juego.TieneResenas)
+                                        {
+                                            @($"{juego.PromedioTexto} · {juego.TotalResenasTexto}")
+                                        }
+                                        else
+                                        {
+                                            @juego.TotalResenasTexto
+                                        }
+                                    </p>
                                 </div>
 
                             </article>

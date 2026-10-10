@@ -22,13 +22,13 @@
         <h2>@Seleccionado.Titulo</h2>
 
         <div class="panel-chips">
-            <span class="chip">@Seleccionado.Plataforma</span>
-            <span class="chip">@Seleccionado.Estado</span>
+            <span class="chip chip-neutral">@Seleccionado.Plataforma</span>
+            <span class="@ChipFiori.DeEstado(Seleccionado.Estado)">@Seleccionado.Estado</span>
             @if (Seleccionado.TieneMetacritic)
             {
-                <span class="chip">@Seleccionado.MetacriticTexto</span>
+                <span class="@ChipFiori.DeMetacritic(Seleccionado.Metacritic)">@Seleccionado.MetacriticTexto</span>
             }
-            <span class="chip">@Seleccionado.EtiquetaProgreso</span>
+            <span class="@ChipFiori.DeProgreso(Seleccionado.Completado)">@Seleccionado.EtiquetaProgreso</span>
         </div>
 
         <dl class="panel-datos">
@@ -42,7 +42,7 @@
             <dd>@Seleccionado.TotalResenasTexto</dd>
         </dl>
 
-        <button class="boton-detalle" @onclick="VerDetalleCompleto">Ver detalle completo</button>
+        <button class="btn btn-primario boton-detalle" @onclick="VerDetalleCompleto">Ver detalle completo</button>
 
         @* Las reseñas son la entidad relacionada: llegan en el mismo JSON por el $expand. *@
         <div class="panel-resenas">
@@ -59,7 +59,7 @@
                     <div class="resena">
                         <div class="resena-encabezado">
                             <span class="resena-autor">@resena.Autor</span>
-                            <span class="chip">@resena.CalificacionTexto</span>
+                            <span class="@ChipFiori.DeCalificacion(resena.Calificacion)">@resena.CalificacionTexto</span>
                         </div>
                         <p class="resena-comentario">@resena.Comentario</p>
                         <span class="resena-fecha">@resena.FechaCorta</span>

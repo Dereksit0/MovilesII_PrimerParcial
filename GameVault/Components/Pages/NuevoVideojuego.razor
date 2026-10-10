@@ -1,0 +1,112 @@
+@page "/nuevo"
+@inject IVideojuegoRepository Repositorio
+@inject NavigationManager Navegacion
+
+<h1>Nuevo juego</h1>
+<p class="lista-sub">Se guarda en GameVault.Api, no en la memoria de la app.</p>
+
+<EditForm Model="modelo" OnValidSubmit="GuardarAsync" class="formulario">
+
+    <DataAnnotationsValidator />
+
+    @if (error is not null)
+    {
+        <div class="aviso error">@error</div>
+    }
+
+    <div class="campo">
+        <label for="titulo">Título</label>
+        <InputText id="titulo" @bind-Value="modelo.Titulo" placeholder="Nombre del juego" />
+        <ValidationMessage For="() => modelo.Titulo" />
+    </div>
+
+    <div class="campo">
+        <label for="plataforma">Plataforma</label>
+        <InputSelect id="plataforma" @bind-Value="modelo.Plataforma">
+            <option value="">Elige una plataforma</option>
+            @foreach (var plataforma in Repositorio.ObtenerPlataformas())
+            {
+                <option value="@plataforma">@plataforma</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="() => modelo.Plataforma" />
+    </div>
+
+    <div class="campo">
+        <label for="estado">Estado</label>
+        <InputSelect id="estado" @bind-Value="modelo.Estado">
+            <option value="">Elige el estado</option>
+            @foreach (var estado in Repositorio.ObtenerEstados())
+            {
+                <option value="@estado">@estado</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="() => modelo.Estado" />
+    </div>
+
+    <div class="campo">
+        <label for="valor">Valor estimado (MXN)</label>
+        <InputNumber id="valor" @bind-Value="modelo.ValorEstimado" />
+        <ValidationMessage For="() => modelo.ValorEstimado" />
+    </div>
+
+    <div class="campo">
+        <label for="metacritic">Metacritic</label>
+        <InputNumber id="metacritic" @bind-Value="modelo.Metacritic" placeholder="Opcional" />
+        <ValidationMessage For="() => modelo.Metacritic" />
+    </div>
+
+    <div class="campo">
+        <label for="portada">URL de la portada</label>
+        <InputText id="portada" @bind-Value="modelo.ImagenUrl" placeholder="https://..." />
+        <ValidationMessage For="() => modelo.ImagenUrl" />
+    </div>
+
+    <div class="campo-check">
+        <label>
+            <InputCheckbox @bind-Value="modelo.EsFavorito" />
+            Lo quiero en la wishlist
+        </label>
+
+        <label>
+            <InputCheckbox @bind-Value="modelo.Completado" />
+            Ya me lo acabé
+        </label>
+    </div>
+
+    <div class="formulario-acciones">
+        <button type="submit" class="btn btn-primario" disabled="@guardando">
+            @(guardando ? "Guardando..." : "Agregar a la colección")
+        </button>
+        <button type="button" class="btn btn-ghost" @onclick="Cancelar" disabled="@guardando">Cancelar</button>
+    </div>
+
+</EditForm>
+
+@code {
+    private VideojuegoFormDto modelo = new();
+    private bool guardando;
+    private string? error;
+
+    // Solo llega aqui si pasaron todas las validaciones.
+    private async Task GuardarAsync()
+    {
+        guardando = true;
+        error = null;
+
+        // POST /odata/Videojuegos y, si sale bien, el juego ya entra en la lista.
+        var resultado = await Repositorio.AgregarAsync(modelo.AVideojuego());
+
+        guardando = false;
+
+        if (!resultado.Exito)
+        {
+            error = resultado.MensajeError;
+            return;
+        }
+
+        Navegacion.NavigateTo("/");
+    }
+
+    private void Cancelar() => Navegacion.NavigateTo("/");
+}

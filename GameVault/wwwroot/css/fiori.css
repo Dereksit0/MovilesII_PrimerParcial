@@ -1,0 +1,70 @@
+/*
+   Lenguaje visual estilo SAP Fiori para GameVault.
+   Todos los colores, tipografias y espaciados de la app salen de aqui.
+   Ningun componente define sus propios hex.
+*/
+
+:root {
+
+    /* --- Paleta de marca --- */
+    --fiori-brand: #0a6ed1;
+    --fiori-brand-oscuro: #0854a0;
+    --fiori-brand-claro: #d1e8ff;
+    --fiori-shell: #354a5f;
+    --fiori-shell-texto: #ffffff;
+
+    /* --- Fondos y superficies --- */
+    --fiori-fondo: #f5f6f7;
+    --fiori-superficie: #ffffff;
+    --fiori-superficie-alt: #fafafa;
+    --fiori-borde: #d9d9d9;
+    --fiori-borde-fuerte: #89919a;
+
+    /* --- Texto --- */
+    --fiori-texto: #32363a;
+    --fiori-texto-suave: #6a6d70;
+    --fiori-texto-inverso: #ffffff;
+
+    /* --- Colores semanticos (estados) --- */
+    --fiori-positivo: #107e3e;
+    --fiori-positivo-fondo: #ebf5eb;
+    --fiori-critico: #e9730c;
+    --fiori-critico-fondo: #fef7f1;
+    --fiori-negativo: #bb0000;
+    --fiori-negativo-fondo: #ffebeb;
+    --fiori-informativo: #0a6ed1;
+    --fiori-informativo-fondo: #eaf3fc;
+    --fiori-neutral: #6a6d70;
+    --fiori-neutral-fondo: #f2f2f2;
+
+    /* --- Tipografia --- */
+    --fiori-fuente: "72", "72full", "Segoe UI", "Open Sans", Arial, sans-serif;
+    --fiori-texto-xs: .6875rem;
+    --fiori-texto-s: .8125rem;
+    --fiori-texto-m: .875rem;
+    --fiori-texto-l: 1rem;
+    --fiori-titulo-s: 1.125rem;
+    --fiori-titulo-m: 1.375rem;
+    --fiori-titulo-l: 1.75rem;
+    --fiori-peso-normal: 400;
+    --fiori-peso-medio: 600;
+
+    /* --- Espaciados --- */
+    --fiori-espacio-xs: .25rem;
+    --fiori-espacio-s: .5rem;
+    --fiori-espacio-m: 1rem;
+    --fiori-espacio-l: 1.5rem;
+    --fiori-espacio-xl: 2rem;
+
+    /* --- Formas y sombras --- */
+    --fiori-radio-s: .25rem;
+    --fiori-radio-m: .5rem;
+    --fiori-radio-chip: 1rem;
+    --fiori-sombra-tarjeta: 0 0 0 1px rgba(0, 0, 0, .05), 0 .125rem .5rem rgba(0, 0, 0, .08);
+    --fiori-sombra-shell: 0 .125rem .25rem rgba(0, 0, 0, .18);
+    --fiori-foco: 0 0 0 .125rem var(--fiori-brand-claro);
+
+    /* --- Medidas del armazon --- */
+    --fiori-alto-shell: 2.75rem;
+    --fiori-alto-control: 2.25rem;
+}

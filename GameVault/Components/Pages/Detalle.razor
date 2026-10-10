@@ -13,12 +13,12 @@ else if (juego is null)
 {
     <div class="aviso error">
         <p>@(error ?? "No encontramos ese juego.")</p>
-        <button @onclick="Volver">Volver</button>
+        <button class="btn btn-secundario" @onclick="Volver">Volver</button>
     </div>
 }
 else
 {
-    <button class="boton-volver" @onclick="Volver">← Volver a @NombreDeDonde</button>
+    <button class="btn btn-ghost boton-volver" @onclick="Volver">← Volver a @NombreDeDonde</button>
 
     <article class="detalle">
 
@@ -34,16 +34,16 @@ else
             <h1>@juego.Titulo</h1>
 
             <div class="panel-chips">
-                <span class="chip">@juego.Plataforma</span>
-                <span class="chip">@juego.Estado</span>
+                <span class="chip chip-neutral">@juego.Plataforma</span>
+                <span class="@ChipFiori.DeEstado(juego.Estado)">@juego.Estado</span>
                 @if (juego.TieneMetacritic)
                 {
-                    <span class="chip">@juego.MetacriticTexto</span>
+                    <span class="@ChipFiori.DeMetacritic(juego.Metacritic)">@juego.MetacriticTexto</span>
                 }
-                <span class="chip">@juego.EtiquetaProgreso</span>
+                <span class="@ChipFiori.DeProgreso(juego.Completado)">@juego.EtiquetaProgreso</span>
                 @if (juego.EsFavorito)
                 {
-                    <span class="chip">En wishlist</span>
+                    <span class="chip chip-critico">En wishlist</span>
                 }
             </div>
 
@@ -56,8 +56,8 @@ else
             </dl>
 
             <div class="detalle-acciones">
-                <button @onclick="AlternarFavoritoAsync">@TextoFavorito</button>
-                <button @onclick="AlternarCompletadoAsync">@TextoCompletado</button>
+                <button class="btn btn-primario" @onclick="AlternarFavoritoAsync">@TextoFavorito</button>
+                <button class="btn btn-secundario" @onclick="AlternarCompletadoAsync">@TextoCompletado</button>
             </div>
 
             <div class="panel-resenas">
@@ -74,7 +74,7 @@ else
                         <div class="resena">
                             <div class="resena-encabezado">
                                 <span class="resena-autor">@resena.Autor</span>
-                                <span class="chip">@resena.CalificacionTexto</span>
+                                <span class="@ChipFiori.DeCalificacion(resena.Calificacion)">@resena.CalificacionTexto</span>
                             </div>
                             <p class="resena-comentario">@resena.Comentario</p>
                             <span class="resena-fecha">@resena.FechaCorta</span>
