@@ -18,6 +18,8 @@ else if (juego is null)
 }
 else
 {
+    <button class="boton-volver" @onclick="Volver">← Volver a @NombreDeDonde</button>
+
     <article class="detalle">
 
         <div class="detalle-portada">
@@ -94,6 +96,19 @@ else
     [Parameter]
     public int Id { get; set; }
 
+    // De que pestaña llegamos, para que el boton de volver regrese al mismo lugar.
+    [SupplyParameterFromQuery(Name = "desde")]
+    public string? Desde { get; set; }
+
+    private string RutaDeRegreso => string.IsNullOrWhiteSpace(Desde) ? "/" : $"/{Desde}";
+
+    private string NombreDeDonde => Desde switch
+    {
+        "wishlist" => "la wishlist",
+        "terminados" => "terminados",
+        _ => "la colección"
+    };
+
     private string TextoFavorito =>
         juego?.EsFavorito == true ? "Quitar de la wishlist" : "Agregar a la wishlist";
 
@@ -134,5 +149,5 @@ else
         juego = Repositorio.ObtenerPorId(Id);
     }
 
-    private void Volver() => Navegacion.NavigateTo("/");
+    private void Volver() => Navegacion.NavigateTo(RutaDeRegreso);
 }

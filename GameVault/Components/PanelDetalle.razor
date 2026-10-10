@@ -1,3 +1,5 @@
+@inject NavigationManager Navegacion
+
 @* El juego no llega por parametro normal: lo recibe del CascadingValue que pone la lista. *@
 
 <aside class="panel-detalle">
@@ -40,6 +42,8 @@
             <dd>@Seleccionado.TotalResenasTexto</dd>
         </dl>
 
+        <button class="boton-detalle" @onclick="VerDetalleCompleto">Ver detalle completo</button>
+
         @* Las reseñas son la entidad relacionada: llegan en el mismo JSON por el $expand. *@
         <div class="panel-resenas">
             <h3>Reseñas</h3>
@@ -70,4 +74,17 @@
 @code {
     [CascadingParameter(Name = "VideojuegoSeleccionado")]
     public VideojuegoDto? Seleccionado { get; set; }
+
+    private void VerDetalleCompleto()
+    {
+        if (Seleccionado is null)
+        {
+            return;
+        }
+
+        // Nos llevamos la pestaña de donde salimos para que el boton de volver regrese ahi.
+        var desde = Navegacion.ToBaseRelativePath(Navegacion.Uri);
+
+        Navegacion.NavigateTo($"videojuego/{Seleccionado.Id}?desde={Uri.EscapeDataString(desde)}");
+    }
 }

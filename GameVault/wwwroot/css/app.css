@@ -446,3 +446,25 @@ button {
         object-fit: cover;
     }
 }
+
+/* ---- Botones de navegacion del detalle ---- */
+
+.boton-detalle {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 14px;
+    border: 1px solid #4aa3ff;
+    border-radius: 8px;
+    background: transparent;
+    color: #9ecbff;
+}
+
+.boton-volver {
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border: 1px solid #3a4756;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-size: .85rem;
+}
