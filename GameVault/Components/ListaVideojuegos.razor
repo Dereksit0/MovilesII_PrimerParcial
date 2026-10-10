@@ -69,7 +69,7 @@
                         @foreach (var juego in Visibles)
                         {
                             <article class="tarjeta @(EsSeleccionado(juego) ? "activa" : string.Empty)"
-                                     @onclick="() => Seleccionar(juego)">
+                                     @onclick="() => SeleccionarAsync(juego)">
 
                                 @if (juego.TienePortada)
                                 {
@@ -187,7 +187,19 @@
 
     private void LimpiarBusqueda() => textoBusqueda = string.Empty;
 
-    private void Seleccionar(VideojuegoDto juego) => seleccionado = juego;
+    private async Task SeleccionarAsync(VideojuegoDto juego)
+    {
+        // Pintamos de inmediato lo que ya teniamos y luego pedimos el juego con sus
+        // resenas frescas (GET /odata/Videojuegos(id)?$expand=Resenas).
+        seleccionado = juego;
+
+        var actualizado = await Repositorio.ObtenerConResenasAsync(juego.Id);
+
+        if (actualizado is not null && seleccionado?.Id == actualizado.Id)
+        {
+            seleccionado = actualizado;
+        }
+    }
 
     private bool EsSeleccionado(VideojuegoDto juego) => seleccionado?.Id == juego.Id;
 

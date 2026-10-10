@@ -353,3 +353,50 @@ button {
         order: -1;
     }
 }
+
+/* ---- Reseñas dentro del panel ---- */
+
+.panel-resenas {
+    margin-top: 14px;
+    border-top: 1px solid #28333f;
+    padding-top: 12px;
+}
+
+.panel-resenas h3 {
+    margin: 0 0 8px;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    opacity: .6;
+}
+
+.resena {
+    border: 1px solid #28333f;
+    border-radius: 8px;
+    padding: 9px 10px;
+    margin-bottom: 8px;
+}
+
+.resena-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.resena-autor {
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+.resena-comentario {
+    margin: 0 0 4px;
+    font-size: .8rem;
+    opacity: .8;
+}
+
+.resena-fecha {
+    font-size: .7rem;
+    opacity: .45;
+}

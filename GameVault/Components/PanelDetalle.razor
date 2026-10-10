@@ -39,6 +39,30 @@
             <dt>Reseñas</dt>
             <dd>@Seleccionado.TotalResenasTexto</dd>
         </dl>
+
+        @* Las reseñas son la entidad relacionada: llegan en el mismo JSON por el $expand. *@
+        <div class="panel-resenas">
+            <h3>Reseñas</h3>
+
+            @if (!Seleccionado.TieneResenas)
+            {
+                <p class="panel-vacio">Este juego todavía no tiene reseñas.</p>
+            }
+            else
+            {
+                @foreach (var resena in Seleccionado.Resenas.OrderByDescending(r => r.Fecha))
+                {
+                    <div class="resena">
+                        <div class="resena-encabezado">
+                            <span class="resena-autor">@resena.Autor</span>
+                            <span class="chip">@resena.CalificacionTexto</span>
+                        </div>
+                        <p class="resena-comentario">@resena.Comentario</p>
+                        <span class="resena-fecha">@resena.FechaCorta</span>
+                    </div>
+                }
+            }
+        </div>
     }
 
 </aside>
