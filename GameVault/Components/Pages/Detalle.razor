@@ -1,0 +1,138 @@
+@page "/videojuego/{Id:int}"
+@inject IVideojuegoRepository Repositorio
+@inject NavigationManager Navegacion
+
+@if (cargando)
+{
+    <div class="aviso cargando">
+        <span class="spinner"></span>
+        Cargando el juego...
+    </div>
+}
+else if (juego is null)
+{
+    <div class="aviso error">
+        <p>@(error ?? "No encontramos ese juego.")</p>
+        <button @onclick="Volver">Volver</button>
+    </div>
+}
+else
+{
+    <article class="detalle">
+
+        <div class="detalle-portada">
+            @if (juego.TienePortada)
+            {
+                <img src="@juego.ImagenUrl" alt="@juego.Titulo" />
+            }
+        </div>
+
+        <div class="detalle-cuerpo">
+
+            <h1>@juego.Titulo</h1>
+
+            <div class="panel-chips">
+                <span class="chip">@juego.Plataforma</span>
+                <span class="chip">@juego.Estado</span>
+                @if (juego.TieneMetacritic)
+                {
+                    <span class="chip">@juego.MetacriticTexto</span>
+                }
+                <span class="chip">@juego.EtiquetaProgreso</span>
+                @if (juego.EsFavorito)
+                {
+                    <span class="chip">En wishlist</span>
+                }
+            </div>
+
+            <dl class="panel-datos">
+                <dt>Valor estimado</dt>
+                <dd>@juego.ValorFormateado</dd>
+
+                <dt>Calificación de la comunidad</dt>
+                <dd>@juego.PromedioTexto · @juego.TotalResenasTexto</dd>
+            </dl>
+
+            <div class="detalle-acciones">
+                <button @onclick="AlternarFavoritoAsync">@TextoFavorito</button>
+                <button @onclick="AlternarCompletadoAsync">@TextoCompletado</button>
+            </div>
+
+            <div class="panel-resenas">
+                <h3>Reseñas</h3>
+
+                @if (!juego.TieneResenas)
+                {
+                    <p class="panel-vacio">Este juego todavía no tiene reseñas.</p>
+                }
+                else
+                {
+                    @foreach (var resena in juego.Resenas.OrderByDescending(r => r.Fecha))
+                    {
+                        <div class="resena">
+                            <div class="resena-encabezado">
+                                <span class="resena-autor">@resena.Autor</span>
+                                <span class="chip">@resena.CalificacionTexto</span>
+                            </div>
+                            <p class="resena-comentario">@resena.Comentario</p>
+                            <span class="resena-fecha">@resena.FechaCorta</span>
+                        </div>
+                    }
+                }
+            </div>
+
+        </div>
+
+    </article>
+}
+
+@code {
+    private VideojuegoDto? juego;
+    private bool cargando = true;
+    private string? error;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private string TextoFavorito =>
+        juego?.EsFavorito == true ? "Quitar de la wishlist" : "Agregar a la wishlist";
+
+    private string TextoCompletado =>
+        juego?.Completado == true ? "Marcar como pendiente" : "Marcar como terminado";
+
+    protected override async Task OnInitializedAsync() => await CargarAsync();
+
+    private async Task CargarAsync()
+    {
+        cargando = true;
+        error = null;
+
+        // La coleccion puede no estar cargada si entramos directo por la ruta.
+        var resultado = await Repositorio.InicializarAsync();
+
+        if (!resultado.Exito)
+        {
+            error = resultado.MensajeError;
+            juego = null;
+            cargando = false;
+            return;
+        }
+
+        juego = await Repositorio.ObtenerConResenasAsync(Id);
+        cargando = false;
+    }
+
+    private async Task AlternarFavoritoAsync()
+    {
+        await Repositorio.AlternarFavoritoAsync(Id);
+        juego = Repositorio.ObtenerPorId(Id);
+    }
+
+    private async Task AlternarCompletadoAsync()
+    {
+        await Repositorio.AlternarCompletadoAsync(Id);
+        juego = Repositorio.ObtenerPorId(Id);
+    }
+
+    private void Volver() => Navegacion.NavigateTo("/");
+}
