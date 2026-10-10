@@ -1,0 +1,77 @@
+@page "/nuevo"
+@inject IVideojuegoRepository Repositorio
+@inject NavigationManager Navegacion
+
+<h1>Nuevo juego</h1>
+<p class="lista-sub">Se guarda en GameVault.Api, no en la memoria de la app.</p>
+
+<EditForm Model="modelo" OnValidSubmit="GuardarAsync" class="formulario">
+
+    <div class="campo">
+        <label for="titulo">Título</label>
+        <InputText id="titulo" @bind-Value="modelo.Titulo" placeholder="Nombre del juego" />
+    </div>
+
+    <div class="campo">
+        <label for="plataforma">Plataforma</label>
+        <InputSelect id="plataforma" @bind-Value="modelo.Plataforma">
+            <option value="">Elige una plataforma</option>
+            @foreach (var plataforma in Repositorio.ObtenerPlataformas())
+            {
+                <option value="@plataforma">@plataforma</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="campo">
+        <label for="estado">Estado</label>
+        <InputSelect id="estado" @bind-Value="modelo.Estado">
+            <option value="">Elige el estado</option>
+            @foreach (var estado in Repositorio.ObtenerEstados())
+            {
+                <option value="@estado">@estado</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="campo">
+        <label for="valor">Valor estimado (MXN)</label>
+        <InputNumber id="valor" @bind-Value="modelo.ValorEstimado" />
+    </div>
+
+    <div class="campo">
+        <label for="metacritic">Metacritic</label>
+        <InputNumber id="metacritic" @bind-Value="modelo.Metacritic" placeholder="Opcional" />
+    </div>
+
+    <div class="campo">
+        <label for="portada">URL de la portada</label>
+        <InputText id="portada" @bind-Value="modelo.ImagenUrl" placeholder="https://..." />
+    </div>
+
+    <div class="campo-check">
+        <label>
+            <InputCheckbox @bind-Value="modelo.EsFavorito" />
+            Lo quiero en la wishlist
+        </label>
+
+        <label>
+            <InputCheckbox @bind-Value="modelo.Completado" />
+            Ya me lo acabé
+        </label>
+    </div>
+
+    <div class="formulario-acciones">
+        <button type="submit">Agregar a la colección</button>
+        <button type="button" @onclick="Cancelar">Cancelar</button>
+    </div>
+
+</EditForm>
+
+@code {
+    private VideojuegoFormDto modelo = new();
+
+    private Task GuardarAsync() => Task.CompletedTask;
+
+    private void Cancelar() => Navegacion.NavigateTo("/");
+}
