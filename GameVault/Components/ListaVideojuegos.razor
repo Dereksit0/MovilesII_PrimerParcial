@@ -182,10 +182,23 @@
         cargando = false;
     }
 
-    private void AlEscribir(ChangeEventArgs argumentos) =>
+    private void AlEscribir(ChangeEventArgs argumentos)
+    {
         textoBusqueda = argumentos.Value?.ToString() ?? string.Empty;
+        OlvidarSeleccionSiYaNoSeVe();
+    }
 
     private void LimpiarBusqueda() => textoBusqueda = string.Empty;
+
+    // Si el juego seleccionado deja de aparecer en la lista (por la busqueda o porque
+    // se borro), el panel se quedaba mostrandolo como si nada.
+    private void OlvidarSeleccionSiYaNoSeVe()
+    {
+        if (seleccionado is not null && Visibles.All(juego => juego.Id != seleccionado.Id))
+        {
+            seleccionado = null;
+        }
+    }
 
     private async Task SeleccionarAsync(VideojuegoDto juego)
     {
@@ -211,7 +224,11 @@
             System.Globalization.CompareOptions.IgnoreCase |
             System.Globalization.CompareOptions.IgnoreNonSpace) >= 0;
 
-    private void AlCambiarLaColeccion() => InvokeAsync(StateHasChanged);
+    private void AlCambiarLaColeccion() => InvokeAsync(() =>
+    {
+        OlvidarSeleccionSiYaNoSeVe();
+        StateHasChanged();
+    });
 
     public void Dispose() => Repositorio.CambioLaColeccion -= AlCambiarLaColeccion;
 }
