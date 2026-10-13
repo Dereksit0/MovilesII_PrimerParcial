@@ -6,7 +6,7 @@ public partial class App : Application
     {
         InitializeComponent();
 
-        UserAppTheme = AppTheme.Dark;
+        UserAppTheme = AppTheme.Light;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:blazor="clr-namespace:Microsoft.AspNetCore.Components.WebView.Maui;assembly=Microsoft.AspNetCore.Components.WebView.Maui"
     xmlns:componentes="clr-namespace:GameVault.Components"
-    BackgroundColor="#F5F6F7">
+    BackgroundColor="{StaticResource FioriFondo}">
 
     <blazor:BlazorWebView x:Name="vistaBlazor" HostPage="wwwroot/index.html">
         <blazor:BlazorWebView.RootComponents>
