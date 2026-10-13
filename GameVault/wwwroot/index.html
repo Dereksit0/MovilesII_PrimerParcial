@@ -15,13 +15,23 @@
         <div class="arranque">Cargando GameVault...</div>
     </div>
 
-    <div id="blazor-error-ui">
+    <div id="blazor-error-ui" role="alert">
         Algo se rompio en la app.
         <a href="" class="reload">Recargar</a>
-        <span class="dismiss">x</span>
+        <button type="button" class="dismiss" aria-label="Cerrar este aviso">x</button>
     </div>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script>
+        // Recargar y cerrar la barra de error.
+        document.querySelector("#blazor-error-ui .reload").addEventListener("click", function (e) {
+            e.preventDefault();
+            location.reload();
+        });
+        document.querySelector("#blazor-error-ui .dismiss").addEventListener("click", function () {
+            document.getElementById("blazor-error-ui").style.display = "none";
+        });
+    </script>
 </body>
 
 </html>

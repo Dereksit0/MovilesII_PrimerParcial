@@ -1,0 +1,49 @@
+@* MessageStrip de Fiori: franja con icono y color semantico para avisos dentro de la pantalla. *@
+
+<div class="message-strip @Clase" role="@Rol">
+
+    <Icono Nombre="@NombreIcono" />
+
+    <div class="message-strip-texto">@ChildContent</div>
+
+    @if (Cerrable)
+    {
+        <button type="button" class="message-strip-cerrar" aria-label="Cerrar el mensaje" @onclick="OnCerrar">
+            <Icono Nombre="cerrar" />
+        </button>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public TipoMensaje Tipo { get; set; } = TipoMensaje.Informacion;
+
+    [Parameter]
+    public bool Cerrable { get; set; }
+
+    [Parameter]
+    public EventCallback OnCerrar { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    // Los errores y advertencias se anuncian de inmediato (alert); el resto con calma (status).
+    private string Rol => Tipo is TipoMensaje.Error or TipoMensaje.Advertencia ? "alert" : "status";
+
+    private string Clase => Tipo switch
+    {
+        TipoMensaje.Exito => "message-strip-exito",
+        TipoMensaje.Advertencia => "message-strip-advertencia",
+        TipoMensaje.Error => "message-strip-error",
+        _ => "message-strip-informacion"
+    };
+
+    private string NombreIcono => Tipo switch
+    {
+        TipoMensaje.Exito => "exito",
+        TipoMensaje.Advertencia => "alerta",
+        TipoMensaje.Error => "error",
+        _ => "info"
+    };
+}

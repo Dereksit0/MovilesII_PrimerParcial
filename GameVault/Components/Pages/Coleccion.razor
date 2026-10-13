@@ -1,3 +1,12 @@
 @page "/"
 
-<ListaVideojuegos Filtro="FiltroLista.Todos" />
+<ListaVideojuegos Filtro="FiltroLista.Todos" MensajeExito="@MensajeExito" />
+
+@code {
+    // El alta nos regresa aqui con ?guardado=titulo para avisar que todo salio bien.
+    [SupplyParameterFromQuery(Name = "guardado")]
+    public string? Guardado { get; set; }
+
+    private string? MensajeExito =>
+        string.IsNullOrWhiteSpace(Guardado) ? null : $"«{Guardado}» se guardó en tu colección.";
+}

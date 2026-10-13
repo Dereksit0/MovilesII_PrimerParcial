@@ -15,7 +15,7 @@
 
     @if (error is not null)
     {
-        <div class="aviso error">@error</div>
+        <MessageStrip Tipo="TipoMensaje.Error">@error</MessageStrip>
     }
 
     <div class="campo">
@@ -109,7 +109,8 @@
             return;
         }
 
-        Navegacion.NavigateTo("/");
+        // Regresamos a la coleccion con el titulo en la ruta para mostrar el mensaje de exito.
+        Navegacion.NavigateTo($"/?guardado={Uri.EscapeDataString(modelo.Titulo.Trim())}");
     }
 
     private void Cancelar() => Navegacion.NavigateTo("/");

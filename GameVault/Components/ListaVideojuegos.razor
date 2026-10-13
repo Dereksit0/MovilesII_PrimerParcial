@@ -12,19 +12,24 @@
         </Acciones>
     </EncabezadoPagina>
 
+    @if (exitoVisible)
+    {
+        <MessageStrip Tipo="TipoMensaje.Exito" Cerrable="true" OnCerrar="OcultarExito">@MensajeExito</MessageStrip>
+    }
+
     @if (cargando)
     {
-        <div class="aviso cargando">
-            <span class="spinner"></span>
+        <div class="cargando" role="status">
+            <span class="spinner" aria-hidden="true"></span>
             Consultando GameVault.Api...
         </div>
     }
     else if (error is not null)
     {
-        <div class="aviso error">
-            <p>@error</p>
+        <MessageStrip Tipo="TipoMensaje.Error">
+            <span>@error</span>
             <button class="btn btn-secundario" @onclick="RecargarAsync">Intentar de nuevo</button>
-        </div>
+        </MessageStrip>
     }
     else
     {
@@ -65,7 +70,7 @@
             <div class="master">
                 @if (Visibles.Count == 0)
                 {
-                    <div class="aviso">@MensajeVacio</div>
+                    <MessageStrip Tipo="TipoMensaje.Informacion">@MensajeVacio</MessageStrip>
                 }
                 else
                 {
@@ -143,6 +148,13 @@
     [Parameter]
     public FiltroLista Filtro { get; set; } = FiltroLista.Todos;
 
+    // Mensaje de exito que llega desde otra pantalla (por ejemplo, al guardar un juego nuevo).
+    [Parameter]
+    public string? MensajeExito { get; set; }
+
+    private string? ultimoMensajeExito;
+    private bool exitoVisible;
+
     private VideojuegoDto? seleccionado;
     private bool ampliado;
 
@@ -191,6 +203,15 @@
             FiltroLista.Terminados => "Aún no terminas ningún juego.",
             _ => "La colección está vacía."
         };
+
+    protected override void OnParametersSet()
+    {
+        if (MensajeExito != ultimoMensajeExito)
+        {
+            ultimoMensajeExito = MensajeExito;
+            exitoVisible = !string.IsNullOrWhiteSpace(MensajeExito);
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -246,6 +267,8 @@
             seleccionado = actualizado;
         }
     }
+
+    private void OcultarExito() => exitoVisible = false;
 
     private void AlternarAmpliado() => ampliado = !ampliado;
 

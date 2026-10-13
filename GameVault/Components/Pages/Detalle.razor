@@ -4,17 +4,17 @@
 
 @if (cargando)
 {
-    <div class="aviso cargando">
-        <span class="spinner"></span>
+    <div class="cargando" role="status">
+        <span class="spinner" aria-hidden="true"></span>
         Cargando el juego...
     </div>
 }
 else if (juego is null)
 {
-    <div class="aviso error">
-        <p>@(error ?? "No encontramos ese juego.")</p>
+    <MessageStrip Tipo="TipoMensaje.Error">
+        <span>@(error ?? "No encontramos ese juego.")</span>
         <button class="btn btn-secundario" @onclick="Volver">Volver</button>
-    </div>
+    </MessageStrip>
 }
 else
 {
@@ -28,6 +28,11 @@ else
             <button class="btn btn-secundario" @onclick="AlternarCompletadoAsync">@TextoCompletado</button>
         </Acciones>
     </EncabezadoPagina>
+
+    @if (mensaje is not null)
+    {
+        <MessageStrip Tipo="tipoMensaje" Cerrable="true" OnCerrar="OcultarMensaje">@mensaje</MessageStrip>
+    }
 
     <button class="btn btn-ghost boton-volver" @onclick="Volver">
         <Icono Nombre="atras" />
@@ -159,6 +164,8 @@ else
     private bool cargando = true;
     private string? error;
     private int idCargado;
+    private string? mensaje;
+    private TipoMensaje tipoMensaje;
 
     [Parameter]
     public int Id { get; set; }
@@ -214,6 +221,7 @@ else
     {
         cargando = true;
         error = null;
+        mensaje = null;
 
         // La coleccion puede no estar cargada si entramos directo por la ruta.
         var resultado = await Repositorio.InicializarAsync();
@@ -232,15 +240,51 @@ else
 
     private async Task AlternarFavoritoAsync()
     {
-        await Repositorio.AlternarFavoritoAsync(Id);
-        juego = Repositorio.ObtenerPorId(Id);
+        var antes = juego?.EsFavorito;
+        var resultado = await Repositorio.AlternarFavoritoAsync(Id);
+
+        juego = Repositorio.ObtenerPorId(Id) ?? juego;
+
+        Avisar(resultado, antes != juego?.EsFavorito,
+            juego?.EsFavorito == true
+                ? $"«{juego.Titulo}» se agregó a tu wishlist."
+                : $"«{juego?.Titulo}» salió de tu wishlist.");
     }
 
     private async Task AlternarCompletadoAsync()
     {
-        await Repositorio.AlternarCompletadoAsync(Id);
-        juego = Repositorio.ObtenerPorId(Id);
+        var antes = juego?.Completado;
+        var resultado = await Repositorio.AlternarCompletadoAsync(Id);
+
+        juego = Repositorio.ObtenerPorId(Id) ?? juego;
+
+        Avisar(resultado, antes != juego?.Completado,
+            juego?.Completado == true
+                ? $"«{juego.Titulo}» quedó como terminado."
+                : $"«{juego?.Titulo}» volvió a pendiente.");
     }
+
+    // Si el servicio no guardo el cambio (el repositorio no marca error en ese caso) lo avisamos igual.
+    private void Avisar(ResultadoCarga resultado, bool huboCambio, string textoExito)
+    {
+        if (!resultado.Exito)
+        {
+            tipoMensaje = TipoMensaje.Error;
+            mensaje = resultado.MensajeError;
+        }
+        else if (!huboCambio)
+        {
+            tipoMensaje = TipoMensaje.Error;
+            mensaje = "No se pudo guardar el cambio en GameVault.Api.";
+        }
+        else
+        {
+            tipoMensaje = TipoMensaje.Exito;
+            mensaje = textoExito;
+        }
+    }
+
+    private void OcultarMensaje() => mensaje = null;
 
     private void Volver() => Navegacion.NavigateTo(RutaDeRegreso);
 }
