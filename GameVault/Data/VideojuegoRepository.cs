@@ -8,18 +8,6 @@ namespace GameVault.Data;
 // Guarda en memoria lo ultimo que trajo el servicio para que la UI no vuelva a pedir en cada clic.
 public class VideojuegoRepository : IVideojuegoRepository
 {
-    private static readonly string[] Plataformas =
-    [
-        "PC", "PS5", "PS4", "PS2", "PS1", "Xbox Series X", "Xbox 360",
-        "Nintendo Switch", "GameCube", "N64", "SNES"
-    ];
-
-    private static readonly string[] Estados =
-    [
-        "En colección", "Deseado", "Completo en caja (CIB)",
-        "Solo cartucho/disco", "Vendido"
-    ];
-
     private readonly IVideojuegoApiService _api;
     private readonly List<VideojuegoDto> _juegos = [];
 
@@ -114,9 +102,9 @@ public class VideojuegoRepository : IVideojuegoRepository
             }
         });
 
-    public IReadOnlyList<string> ObtenerPlataformas() => Plataformas;
+    public IReadOnlyList<string> ObtenerPlataformas() => Catalogos.Plataformas;
 
-    public IReadOnlyList<string> ObtenerEstados() => Estados;
+    public IReadOnlyList<string> ObtenerEstados() => Catalogos.Estados;
 
     private Task<ResultadoCarga> CambiarBanderasAsync(
         int id,

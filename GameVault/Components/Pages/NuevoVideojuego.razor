@@ -9,6 +9,7 @@
     </Migas>
 </EncabezadoPagina>
 
+@* SimpleForm de Fiori: etiqueta y campo en dos columnas cuando hay espacio, y en una sola en el celular. *@
 <EditForm Model="modelo" OnValidSubmit="GuardarAsync" class="formulario">
 
     <DataAnnotationsValidator />
@@ -18,15 +19,17 @@
         <MessageStrip Tipo="TipoMensaje.Error">@error</MessageStrip>
     }
 
+    <p class="formulario-nota"><span class="obligatorio" aria-hidden="true">*</span> Campo obligatorio</p>
+
     <div class="campo">
-        <label for="titulo">Título</label>
-        <InputText id="titulo" @bind-Value="modelo.Titulo" placeholder="Nombre del juego" />
+        <label for="titulo">Título <span class="obligatorio" aria-hidden="true">*</span></label>
+        <InputText id="titulo" @bind-Value="modelo.Titulo" placeholder="Nombre del juego" aria-required="true" />
         <ValidationMessage For="() => modelo.Titulo" />
     </div>
 
     <div class="campo">
-        <label for="plataforma">Plataforma</label>
-        <InputSelect id="plataforma" @bind-Value="modelo.Plataforma">
+        <label for="plataforma">Plataforma <span class="obligatorio" aria-hidden="true">*</span></label>
+        <InputSelect id="plataforma" @bind-Value="modelo.Plataforma" aria-required="true">
             <option value="">Elige una plataforma</option>
             @foreach (var plataforma in Repositorio.ObtenerPlataformas())
             {
@@ -37,8 +40,8 @@
     </div>
 
     <div class="campo">
-        <label for="estado">Estado</label>
-        <InputSelect id="estado" @bind-Value="modelo.Estado">
+        <label for="estado">Estado <span class="obligatorio" aria-hidden="true">*</span></label>
+        <InputSelect id="estado" @bind-Value="modelo.Estado" aria-required="true">
             <option value="">Elige el estado</option>
             @foreach (var estado in Repositorio.ObtenerEstados())
             {
@@ -49,20 +52,22 @@
     </div>
 
     <div class="campo">
-        <label for="valor">Valor estimado (MXN)</label>
-        <InputNumber id="valor" @bind-Value="modelo.ValorEstimado" />
+        <label for="valor">Valor estimado (MXN) <span class="obligatorio" aria-hidden="true">*</span></label>
+        <InputNumber id="valor" @bind-Value="modelo.ValorEstimado" aria-required="true"
+                     ParsingErrorMessage="El valor estimado debe ser un número." />
         <ValidationMessage For="() => modelo.ValorEstimado" />
     </div>
 
     <div class="campo">
         <label for="metacritic">Metacritic</label>
-        <InputNumber id="metacritic" @bind-Value="modelo.Metacritic" placeholder="Opcional" />
+        <InputNumber id="metacritic" @bind-Value="modelo.Metacritic" placeholder="Opcional"
+                     ParsingErrorMessage="El Metacritic debe ser un número entero." />
         <ValidationMessage For="() => modelo.Metacritic" />
     </div>
 
     <div class="campo">
         <label for="portada">URL de la portada</label>
-        <InputText id="portada" @bind-Value="modelo.ImagenUrl" placeholder="https://..." />
+        <InputText id="portada" @bind-Value="modelo.ImagenUrl" placeholder="https://... (opcional)" />
         <ValidationMessage For="() => modelo.ImagenUrl" />
     </div>
 

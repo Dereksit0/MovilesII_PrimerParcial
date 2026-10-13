@@ -287,7 +287,7 @@ button {
 /* ---- Formulario ---- */
 
 .formulario {
-    max-width: 32rem;
+    max-width: 44rem;
     display: grid;
     gap: var(--fiori-espacio-m);
     padding: var(--fiori-espacio-l);
@@ -1063,4 +1063,48 @@ h1:focus-visible,
 .boton-detalle {
     width: 100%;
     margin-top: var(--fiori-espacio-m);
+}
+
+/* ---- SimpleForm: asterisco de obligatorio y dos columnas ---- */
+
+.obligatorio {
+    color: var(--fiori-negativo);
+    font-weight: var(--fiori-peso-medio);
+}
+
+.formulario-nota {
+    margin: 0;
+    font-size: var(--fiori-texto-xs);
+    color: var(--fiori-texto-suave);
+}
+
+.campo .validation-message {
+    margin: 0;
+}
+
+@media (min-width: 40rem) {
+
+    .formulario {
+        --ancho-etiqueta: 12rem;
+    }
+
+    .campo {
+        grid-template-columns: var(--ancho-etiqueta) minmax(0, 1fr);
+        column-gap: var(--fiori-espacio-m);
+        align-items: start;
+    }
+
+    .campo label {
+        line-height: var(--fiori-alto-control);
+        text-align: right;
+    }
+
+    .campo .validation-message {
+        grid-column: 2;
+    }
+
+    .campo-check,
+    .formulario-acciones {
+        padding-left: calc(var(--ancho-etiqueta) + var(--fiori-espacio-m));
+    }
 }
