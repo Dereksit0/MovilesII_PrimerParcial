@@ -1,5 +1,42 @@
-<nav class="nav-tabs">
-    <NavLink href="" Match="NavLinkMatch.All">Colección</NavLink>
-    <NavLink href="wishlist">Wishlist</NavLink>
-    <NavLink href="terminados">Terminados</NavLink>
+@inject NavigationManager Navegacion
+@implements IDisposable
+
+<nav class="nav-tabs" aria-label="Secciones">
+    <a href="" class="@Clase("")" aria-current="@Actual("")">
+        <Icono Nombre="coleccion" />
+        <span>Colección</span>
+    </a>
+    <a href="wishlist" class="@Clase("wishlist")" aria-current="@Actual("wishlist")">
+        <Icono Nombre="wishlist" />
+        <span>Wishlist</span>
+    </a>
+    <a href="terminados" class="@Clase("terminados")" aria-current="@Actual("terminados")">
+        <Icono Nombre="terminados" />
+        <span>Terminados</span>
+    </a>
 </nav>
+
+@code {
+    // Con NavLink no podiamos poner aria-current, asi que calculamos la pestaña activa a mano.
+    private string RutaActual
+    {
+        get
+        {
+            var ruta = Navegacion.ToBaseRelativePath(Navegacion.Uri);
+            var corte = ruta.IndexOfAny(['?', '#']);
+
+            return (corte >= 0 ? ruta[..corte] : ruta).Trim('/');
+        }
+    }
+
+    private string Clase(string ruta) => RutaActual == ruta ? "active" : string.Empty;
+
+    private string? Actual(string ruta) => RutaActual == ruta ? "page" : null;
+
+    protected override void OnInitialized() => Navegacion.LocationChanged += AlCambiarLaRuta;
+
+    private void AlCambiarLaRuta(object? remitente, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs argumentos) =>
+        InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Navegacion.LocationChanged -= AlCambiarLaRuta;
+}

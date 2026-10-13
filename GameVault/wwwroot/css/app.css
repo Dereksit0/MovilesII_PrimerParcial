@@ -393,7 +393,8 @@ button {
     align-items: center;
     height: 1.75rem;
     padding: 0 var(--fiori-espacio-s);
-    border: 1px solid rgba(255, 255, 255, .5);
+    gap: var(--fiori-espacio-xs);
+    border: 1px solid var(--fiori-shell-borde);
     border-radius: var(--fiori-radio-s);
     color: var(--fiori-shell-texto);
     font-size: var(--fiori-texto-s);
@@ -401,7 +402,7 @@ button {
 
 .shell-accion:hover,
 .shell-accion.active {
-    background: rgba(255, 255, 255, .15);
+    background: var(--fiori-shell-hover);
 }
 
 /* ---- Chips de estado ---- */
@@ -762,4 +763,75 @@ h1:focus-visible,
     .formulario {
         padding: var(--fiori-espacio-m);
     }
+}
+
+/* ---- Iconos ---- */
+
+.icono {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+}
+
+/* ---- Page header y migas de pan ---- */
+
+.encabezado-pagina {
+    margin-bottom: var(--fiori-espacio-m);
+}
+
+.encabezado-fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--fiori-espacio-s) var(--fiori-espacio-m);
+}
+
+.encabezado-titulos {
+    min-width: 0;
+}
+
+.encabezado-pagina h1 {
+    margin: 0 0 var(--fiori-espacio-xs);
+    font-size: var(--fiori-titulo-l);
+    overflow-wrap: anywhere;
+}
+
+.encabezado-subtitulo {
+    margin: 0;
+    color: var(--fiori-texto-suave);
+    font-size: var(--fiori-texto-s);
+}
+
+.encabezado-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fiori-espacio-s);
+}
+
+.migas {
+    margin-bottom: var(--fiori-espacio-s);
+    font-size: var(--fiori-texto-s);
+}
+
+.migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--fiori-texto-suave);
+}
+
+.migas li + li::before {
+    content: "›";
+    margin: 0 var(--fiori-espacio-s);
+}
+
+.migas a {
+    color: var(--fiori-brand);
+}
+
+.migas a:hover {
+    text-decoration: underline;
 }

@@ -18,7 +18,21 @@ else if (juego is null)
 }
 else
 {
-    <button class="btn btn-ghost boton-volver" @onclick="Volver">← Volver a @NombreDeDonde</button>
+    <EncabezadoPagina Titulo="@juego.Titulo" Subtitulo="@juego.Plataforma">
+        <Migas>
+            <li><a href="@RutaDeRegreso">@NombreMiga</a></li>
+            <li aria-current="page">@juego.Titulo</li>
+        </Migas>
+        <Acciones>
+            <button class="btn btn-primario" @onclick="AlternarFavoritoAsync">@TextoFavorito</button>
+            <button class="btn btn-secundario" @onclick="AlternarCompletadoAsync">@TextoCompletado</button>
+        </Acciones>
+    </EncabezadoPagina>
+
+    <button class="btn btn-ghost boton-volver" @onclick="Volver">
+        <Icono Nombre="atras" />
+        Volver a @NombreDeDonde
+    </button>
 
     <article class="detalle">
 
@@ -30,8 +44,6 @@ else
         </div>
 
         <div class="detalle-cuerpo">
-
-            <h1>@juego.Titulo</h1>
 
             <div class="panel-chips">
                 <span class="chip chip-neutral">@juego.Plataforma</span>
@@ -54,11 +66,6 @@ else
                 <dt>Calificación de la comunidad</dt>
                 <dd>@juego.PromedioTexto · @juego.TotalResenasTexto</dd>
             </dl>
-
-            <div class="detalle-acciones">
-                <button class="btn btn-primario" @onclick="AlternarFavoritoAsync">@TextoFavorito</button>
-                <button class="btn btn-secundario" @onclick="AlternarCompletadoAsync">@TextoCompletado</button>
-            </div>
 
             <div class="panel-resenas">
                 <h3>Reseñas</h3>
@@ -128,6 +135,13 @@ else
         "wishlist" => "la wishlist",
         "terminados" => "terminados",
         _ => "la colección"
+    };
+
+    private string NombreMiga => Desde switch
+    {
+        "wishlist" => "Wishlist",
+        "terminados" => "Terminados",
+        _ => "Colección"
     };
 
     private string TextoFavorito =>

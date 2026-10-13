@@ -2,8 +2,12 @@
 @inject IVideojuegoRepository Repositorio
 @inject NavigationManager Navegacion
 
-<h1>Nuevo juego</h1>
-<p class="lista-sub">Se guarda en GameVault.Api, no en la memoria de la app.</p>
+<EncabezadoPagina Titulo="Nuevo juego" Subtitulo="Se guarda en GameVault.Api, no en la memoria de la app.">
+    <Migas>
+        <li><a href="">Colección</a></li>
+        <li aria-current="page">Nuevo juego</li>
+    </Migas>
+</EncabezadoPagina>
 
 <EditForm Model="modelo" OnValidSubmit="GuardarAsync" class="formulario">
 

@@ -1,0 +1,43 @@
+@* Page header al estilo Fiori: migas arriba, titulo con subtitulo a la izquierda y acciones a la derecha. *@
+
+<header class="encabezado-pagina">
+
+    @if (Migas is not null)
+    {
+        <nav class="migas" aria-label="Ruta de navegación">
+            <ol>@Migas</ol>
+        </nav>
+    }
+
+    <div class="encabezado-fila">
+        <div class="encabezado-titulos">
+            <h1>@Titulo</h1>
+
+            @if (!string.IsNullOrWhiteSpace(Subtitulo))
+            {
+                <p class="encabezado-subtitulo">@Subtitulo</p>
+            }
+        </div>
+
+        @if (Acciones is not null)
+        {
+            <div class="encabezado-acciones">@Acciones</div>
+        }
+    </div>
+
+</header>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Titulo { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Subtitulo { get; set; }
+
+    // Cada miga es un <li>; la ultima lleva aria-current="page".
+    [Parameter]
+    public RenderFragment? Migas { get; set; }
+
+    [Parameter]
+    public RenderFragment? Acciones { get; set; }
+}

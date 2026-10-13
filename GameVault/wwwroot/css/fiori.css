@@ -13,6 +13,10 @@
     --fiori-shell: #354a5f;
     --fiori-shell-texto: #ffffff;
 
+    /* --- Shell bar --- */
+    --fiori-shell-borde: rgba(255, 255, 255, .5);
+    --fiori-shell-hover: rgba(255, 255, 255, .15);
+
     /* --- Fondos y superficies --- */
     --fiori-fondo: #f5f6f7;
     --fiori-superficie: #ffffff;
