@@ -519,7 +519,7 @@ button {
 
 .master-detail {
     display: grid;
-    grid-template-columns: 1fr 20rem;
+    grid-template-columns: minmax(0, 1fr) 22rem;
     gap: var(--fiori-espacio-m);
     align-items: start;
 }
@@ -527,6 +527,46 @@ button {
 .master-detail .panel-detalle {
     position: sticky;
     top: 0;
+}
+
+/* Panel ampliado: el detalle ocupa todo el ancho y la lista se esconde (como el "full screen" del FCL). */
+.master-detail.ampliado {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.master-detail.ampliado .master {
+    display: none;
+}
+
+.panel-barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--fiori-espacio-s);
+    padding-bottom: var(--fiori-espacio-xs);
+    border-bottom: 1px solid var(--fiori-borde);
+}
+
+.panel-barra-titulo {
+    font-size: var(--fiori-texto-xs);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--fiori-texto-suave);
+}
+
+.panel-barra-acciones {
+    display: flex;
+    gap: var(--fiori-espacio-xs);
+}
+
+.btn-icono {
+    width: var(--fiori-alto-control);
+    padding: 0;
+}
+
+.btn-icono .icono {
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 /* ---- Panel de detalle ---- */
@@ -711,12 +751,35 @@ button {
 @media (max-width: 54rem) {
 
     .master-detail {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
+    /* En pantallas angostas el detalle no va arriba de la lista: se abre como hoja encima. */
     .master-detail .panel-detalle {
-        position: static;
-        order: -1;
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 900;
+        overflow-y: auto;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .master-detail.con-detalle .panel-detalle {
+        display: block;
+    }
+
+    .panel-barra {
+        position: sticky;
+        top: calc(-1 * var(--fiori-espacio-m));
+        margin: calc(-1 * var(--fiori-espacio-m)) calc(-1 * var(--fiori-espacio-m)) var(--fiori-espacio-s);
+        padding: var(--fiori-espacio-s) var(--fiori-espacio-m);
+        background: var(--fiori-superficie);
+        z-index: 1;
+    }
+
+    .boton-ampliar {
+        display: none;
     }
 
     .detalle {

@@ -2,7 +2,7 @@
 
 @* El juego no llega por parametro normal: lo recibe del CascadingValue que pone la lista. *@
 
-<aside class="panel-detalle">
+<aside class="panel-detalle" aria-label="Detalle del juego" @onkeydown="AlTeclear">
 
     @if (Seleccionado is null)
     {
@@ -12,6 +12,25 @@
     }
     else
     {
+        <div class="panel-barra">
+            <span class="panel-barra-titulo">Detalle</span>
+
+            <div class="panel-barra-acciones">
+                <button type="button" class="btn btn-ghost btn-icono boton-ampliar"
+                        aria-label="@(Ampliado ? "Reducir el panel" : "Ampliar el panel")"
+                        aria-pressed="@(Ampliado ? "true" : "false")"
+                        @onclick="OnAlternarAmpliado">
+                    <Icono Nombre="@(Ampliado ? "reducir" : "ampliar")" />
+                </button>
+
+                <button type="button" class="btn btn-ghost btn-icono"
+                        aria-label="Cerrar el detalle"
+                        @onclick="OnCerrar">
+                    <Icono Nombre="cerrar" />
+                </button>
+            </div>
+        </div>
+
         <div class="panel-portada">
             @if (Seleccionado.TienePortada)
             {
@@ -74,6 +93,24 @@
 @code {
     [CascadingParameter(Name = "VideojuegoSeleccionado")]
     public VideojuegoDto? Seleccionado { get; set; }
+
+    // Lo de abajo si va por parametros normales: es el estado de la columna, no el dato del master-detail.
+    [Parameter]
+    public bool Ampliado { get; set; }
+
+    [Parameter]
+    public EventCallback OnAlternarAmpliado { get; set; }
+
+    [Parameter]
+    public EventCallback OnCerrar { get; set; }
+
+    private async Task AlTeclear(KeyboardEventArgs argumentos)
+    {
+        if (argumentos.Key == "Escape" && Seleccionado is not null)
+        {
+            await OnCerrar.InvokeAsync();
+        }
+    }
 
     private void VerDetalleCompleto()
     {

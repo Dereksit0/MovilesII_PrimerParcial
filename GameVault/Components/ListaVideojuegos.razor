@@ -60,7 +60,7 @@
             <p class="lista-sub">@Visibles.Count de @Base.Count juegos</p>
         }
 
-        <div class="master-detail">
+        <div class="master-detail @(seleccionado is not null ? "con-detalle" : string.Empty) @(ampliado ? "ampliado" : string.Empty)">
 
             <div class="master">
                 @if (Visibles.Count == 0)
@@ -117,7 +117,9 @@
 
             @* Aqui esta el punto del master-detail: el seleccionado baja por cascada al panel. *@
             <CascadingValue Value="seleccionado" Name="VideojuegoSeleccionado">
-                <PanelDetalle />
+                <PanelDetalle Ampliado="ampliado"
+                              OnAlternarAmpliado="AlternarAmpliado"
+                              OnCerrar="CerrarDetalle" />
             </CascadingValue>
 
         </div>
@@ -134,6 +136,7 @@
     public FiltroLista Filtro { get; set; } = FiltroLista.Todos;
 
     private VideojuegoDto? seleccionado;
+    private bool ampliado;
 
     private IReadOnlyList<VideojuegoDto> Base => Filtro switch
     {
@@ -234,6 +237,15 @@
         {
             seleccionado = actualizado;
         }
+    }
+
+    private void AlternarAmpliado() => ampliado = !ampliado;
+
+    // Cerrar el panel es soltar la seleccion; en pantallas angostas eso cierra la hoja de detalle.
+    private void CerrarDetalle()
+    {
+        seleccionado = null;
+        ampliado = false;
     }
 
     private bool EsSeleccionado(VideojuegoDto juego) => seleccionado?.Id == juego.Id;
