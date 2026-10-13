@@ -68,7 +68,10 @@
     --fiori-radio-chip: 1rem;
     --fiori-sombra-tarjeta: 0 0 0 1px rgba(0, 0, 0, .05), 0 .125rem .5rem rgba(0, 0, 0, .08);
     --fiori-sombra-shell: 0 .125rem .25rem rgba(0, 0, 0, .18);
-    --fiori-foco: 0 0 0 .125rem var(--fiori-brand-claro);
+    --fiori-foco: 0 0 0 .125rem var(--fiori-superficie), 0 0 0 .25rem var(--fiori-brand);
+    --fiori-foco-interno: inset 0 0 0 .125rem var(--fiori-brand);
+    --fiori-foco-shell: 0 0 0 .125rem var(--fiori-shell-texto);
+    --fiori-hover-oscuro: rgba(0, 0, 0, .08);
 
     /* --- Medidas del armazon --- */
     --fiori-alto-shell: 2.75rem;

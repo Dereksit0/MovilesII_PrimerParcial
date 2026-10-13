@@ -48,8 +48,10 @@
             </div>
         </div>
 
-        <div class="buscador">
-            <input type="search"
+        <div class="buscador" role="search">
+            <label for="buscador-titulo" class="solo-lectores">Buscar juego por título</label>
+            <input id="buscador-titulo"
+                   type="search"
                    placeholder="Buscar juego por título..."
                    value="@textoBusqueda"
                    @oninput="AlEscribir" />

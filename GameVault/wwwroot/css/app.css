@@ -397,7 +397,7 @@ button {
 }
 
 #blazor-error-ui .dismiss:hover {
-    background: var(--fiori-critico-fondo);
+    background: var(--fiori-hover-oscuro);
 }
 
 /* ---- Piezas de la shell bar ---- */
@@ -476,7 +476,7 @@ button {
 .chip-informativo {
     background: var(--fiori-informativo-fondo);
     border-color: var(--fiori-informativo);
-    color: var(--fiori-informativo);
+    color: var(--fiori-informativo-texto);
 }
 
 .chip-positivo {
@@ -488,7 +488,7 @@ button {
 .chip-critico {
     background: var(--fiori-critico-fondo);
     border-color: var(--fiori-critico);
-    color: var(--fiori-critico);
+    color: var(--fiori-critico-texto);
 }
 
 .chip-negativo {
@@ -544,6 +544,7 @@ button {
 
 .btn-secundario:hover:not(:disabled) {
     background: var(--fiori-brand-claro);
+    color: var(--fiori-brand-oscuro);
 }
 
 /* Accion terciaria, sin marco (cancelar, limpiar). */
@@ -555,6 +556,7 @@ button {
 
 .btn-ghost:hover:not(:disabled) {
     background: var(--fiori-brand-claro);
+    color: var(--fiori-brand-oscuro);
 }
 
 /* ---- Master-detail ---- */
@@ -1055,7 +1057,7 @@ h1:focus-visible,
 }
 
 .message-strip-cerrar:hover {
-    background: var(--fiori-shell-hover);
+    background: var(--fiori-hover-oscuro);
 }
 
 /* ---- Boton "Ver detalle completo" del panel ---- */
@@ -1106,5 +1108,53 @@ h1:focus-visible,
     .campo-check,
     .formulario-acciones {
         padding-left: calc(var(--ancho-etiqueta) + var(--fiori-espacio-m));
+    }
+}
+
+/* ---- Accesibilidad ---- */
+
+/* Texto solo para lectores de pantalla (la etiqueta del buscador, por ejemplo). */
+.solo-lectores {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Foco visible con el token de Fiori en todo lo que se puede operar con teclado. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.btn:focus-visible {
+    outline: none;
+    box-shadow: var(--fiori-foco);
+}
+
+.objeto:focus-visible,
+.nav-tabs a:focus-visible {
+    box-shadow: var(--fiori-foco-interno);
+}
+
+.shell-bar a:focus-visible {
+    box-shadow: var(--fiori-foco-shell);
+}
+
+.campo input:focus,
+.campo select:focus,
+.buscador input:focus {
+    box-shadow: var(--fiori-foco);
+}
+
+/* Quien pide menos movimiento no ve girar el spinner. */
+@media (prefers-reduced-motion: reduce) {
+
+    .spinner {
+        animation: none;
     }
 }
