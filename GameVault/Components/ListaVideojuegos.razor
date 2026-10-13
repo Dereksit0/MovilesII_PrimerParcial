@@ -69,49 +69,57 @@
                 }
                 else
                 {
-                    <div class="tarjetas">
+                    @* Cada juego es un ObjectListItem: titulo, atributos secundarios y estados.
+                       Es un <button> de verdad, asi que ya sale con tabindex, role y Enter/Espacio. *@
+                    <ul class="lista-objetos" aria-label="Videojuegos">
                         @foreach (var juego in Visibles)
                         {
-                            <article class="tarjeta @(EsSeleccionado(juego) ? "activa" : string.Empty)"
-                                     @onclick="() => SeleccionarAsync(juego)">
+                            <li>
+                                <button type="button"
+                                        class="objeto @(EsSeleccionado(juego) ? "activa" : string.Empty)"
+                                        aria-pressed="@(EsSeleccionado(juego) ? "true" : "false")"
+                                        @onclick="() => SeleccionarAsync(juego)">
 
-                                @if (juego.TienePortada)
-                                {
-                                    <img src="@juego.ImagenUrl" alt="@juego.Titulo" loading="lazy" />
-                                }
-                                else
-                                {
-                                    <div class="sin-portada">@juego.Titulo</div>
-                                }
+                                    <span class="objeto-portada">
+                                        @if (juego.TienePortada)
+                                        {
+                                            <img src="@juego.ImagenUrl" alt="" loading="lazy" />
+                                        }
+                                        else
+                                        {
+                                            <span class="objeto-inicial">@Inicial(juego)</span>
+                                        }
+                                    </span>
 
-                                <div class="tarjeta-cuerpo">
-                                    <h2>@juego.Titulo</h2>
+                                    <span class="objeto-cuerpo">
+                                        <span class="objeto-titulo">@juego.Titulo</span>
+                                        <span class="objeto-atributo">@juego.Plataforma · @juego.ValorFormateado</span>
+                                        <span class="objeto-atributo">
+                                            @if (juego.TieneResenas)
+                                            {
+                                                @($"{juego.PromedioTexto} · {juego.TotalResenasTexto}")
+                                            }
+                                            else
+                                            {
+                                                @juego.TotalResenasTexto
+                                            }
+                                        </span>
+                                    </span>
 
-                                    <div class="tarjeta-chips">
-                                        <span class="chip chip-neutral">@juego.Plataforma</span>
+                                    <span class="objeto-estados">
                                         <span class="@ChipFiori.DeEstado(juego.Estado)">@juego.Estado</span>
                                         @if (juego.Completado)
                                         {
                                             <span class="@ChipFiori.DeProgreso(true)">Completado</span>
                                         }
-                                    </div>
+                                    </span>
 
-                                    <p class="tarjeta-meta">@juego.ValorFormateado</p>
-                                    <p class="tarjeta-meta">
-                                        @if (juego.TieneResenas)
-                                        {
-                                            @($"{juego.PromedioTexto} · {juego.TotalResenasTexto}")
-                                        }
-                                        else
-                                        {
-                                            @juego.TotalResenasTexto
-                                        }
-                                    </p>
-                                </div>
+                                    <Icono Nombre="siguiente" />
 
-                            </article>
+                                </button>
+                            </li>
                         }
-                    </div>
+                    </ul>
                 }
             </div>
 
@@ -249,6 +257,9 @@
     }
 
     private bool EsSeleccionado(VideojuegoDto juego) => seleccionado?.Id == juego.Id;
+
+    private static string Inicial(VideojuegoDto juego) =>
+        string.IsNullOrWhiteSpace(juego.Titulo) ? "?" : juego.Titulo.Trim()[..1].ToUpperInvariant();
 
     // La misma comparación que usábamos en el buscador del primer parcial: ignora mayúsculas y acentos.
     private static bool Coincide(string? texto, string filtro) =>

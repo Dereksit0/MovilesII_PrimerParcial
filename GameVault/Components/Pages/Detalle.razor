@@ -34,70 +34,109 @@ else
         Volver a @NombreDeDonde
     </button>
 
-    <article class="detalle">
+    @* Estructura de Object Page: cabecera con estados y atributos clave, y luego secciones con titulo. *@
+    <article class="object-page">
 
-        <div class="detalle-portada">
-            @if (juego.TienePortada)
-            {
-                <img src="@juego.ImagenUrl" alt="@juego.Titulo" />
-            }
-        </div>
+        <section class="objeto-cabecera" aria-label="Resumen del juego">
 
-        <div class="detalle-cuerpo">
-
-            <div class="panel-chips">
-                <span class="chip chip-neutral">@juego.Plataforma</span>
-                <span class="@ChipFiori.DeEstado(juego.Estado)">@juego.Estado</span>
-                @if (juego.TieneMetacritic)
+            <div class="detalle-portada">
+                @if (juego.TienePortada)
                 {
-                    <span class="@ChipFiori.DeMetacritic(juego.Metacritic)">@juego.MetacriticTexto</span>
-                }
-                <span class="@ChipFiori.DeProgreso(juego.Completado)">@juego.EtiquetaProgreso</span>
-                @if (juego.EsFavorito)
-                {
-                    <span class="chip chip-critico">En wishlist</span>
+                    <img src="@juego.ImagenUrl" alt="Portada de @juego.Titulo" />
                 }
             </div>
 
-            <dl class="panel-datos">
-                <dt>Valor estimado</dt>
-                <dd>@juego.ValorFormateado</dd>
+            <div class="objeto-cabecera-cuerpo">
 
-                <dt>Calificación de la comunidad</dt>
-                <dd>@juego.PromedioTexto · @juego.TotalResenasTexto</dd>
-            </dl>
-
-            <div class="panel-resenas">
-                <h3>Reseñas</h3>
-
-                @if (!juego.TieneResenas)
-                {
-                    <p class="panel-vacio">Este juego todavía no tiene reseñas.</p>
-                }
-                else
-                {
-                    @foreach (var resena in juego.Resenas.OrderByDescending(r => r.Fecha))
+                <div class="panel-chips">
+                    <span class="chip chip-neutral">@juego.Plataforma</span>
+                    <span class="@ChipFiori.DeEstado(juego.Estado)">@juego.Estado</span>
+                    @if (juego.TieneMetacritic)
                     {
-                        <div class="resena">
-                            <div class="resena-encabezado">
-                                <span class="resena-autor">@resena.Autor</span>
-                                <span class="@ChipFiori.DeCalificacion(resena.Calificacion)">@resena.CalificacionTexto</span>
-                            </div>
-                            <p class="resena-comentario">@resena.Comentario</p>
-                            <span class="resena-fecha">@resena.FechaCorta</span>
-                        </div>
+                        <span class="@ChipFiori.DeMetacritic(juego.Metacritic)">@juego.MetacriticTexto</span>
                     }
-                }
+                    <span class="@ChipFiori.DeProgreso(juego.Completado)">@juego.EtiquetaProgreso</span>
+                    @if (juego.EsFavorito)
+                    {
+                        <span class="chip chip-critico">En wishlist</span>
+                    }
+                </div>
+
+                <dl class="atributos-clave">
+                    <div>
+                        <dt>Valor estimado</dt>
+                        <dd>@juego.ValorFormateado</dd>
+                    </div>
+                    <div>
+                        <dt>Calificación de la comunidad</dt>
+                        <dd>@juego.PromedioTexto</dd>
+                    </div>
+                    <div>
+                        <dt>Reseñas</dt>
+                        <dd>@juego.TotalResenasTexto</dd>
+                    </div>
+                </dl>
+
             </div>
 
-        </div>
+        </section>
+
+        <section class="seccion" aria-labelledby="seccion-informacion">
+            <h2 id="seccion-informacion">Información</h2>
+
+            <dl class="datos-seccion">
+                <div>
+                    <dt>Plataforma</dt>
+                    <dd>@juego.Plataforma</dd>
+                </div>
+                <div>
+                    <dt>Estado en la colección</dt>
+                    <dd>@juego.Estado</dd>
+                </div>
+                <div>
+                    <dt>Metacritic</dt>
+                    <dd>@(juego.TieneMetacritic ? juego.Metacritic!.Value.ToString() : "Sin dato")</dd>
+                </div>
+                <div>
+                    <dt>Progreso</dt>
+                    <dd>@juego.EtiquetaProgreso</dd>
+                </div>
+                <div>
+                    <dt>Wishlist</dt>
+                    <dd>@(juego.EsFavorito ? "Sí" : "No")</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="seccion" aria-labelledby="seccion-resenas">
+            <h2 id="seccion-resenas">Reseñas</h2>
+
+            @if (!juego.TieneResenas)
+            {
+                <p class="panel-vacio">Este juego todavía no tiene reseñas.</p>
+            }
+            else
+            {
+                @foreach (var resena in juego.Resenas.OrderByDescending(r => r.Fecha))
+                {
+                    <div class="resena">
+                        <div class="resena-encabezado">
+                            <span class="resena-autor">@resena.Autor</span>
+                            <span class="@ChipFiori.DeCalificacion(resena.Calificacion)">@resena.CalificacionTexto</span>
+                        </div>
+                        <p class="resena-comentario">@resena.Comentario</p>
+                        <span class="resena-fecha">@resena.FechaCorta</span>
+                    </div>
+                }
+            }
+        </section>
 
     </article>
 
     @if (Otros.Count > 0)
     {
         <section class="otros">
-            <h3>Otros de tu colección</h3>
+            <h2>Otros de tu colección</h2>
 
             <div class="otros-lista">
                 @foreach (var otro in Otros)
